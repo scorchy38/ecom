@@ -1,10 +1,17 @@
+import 'dart:convert';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecom/exceptions/firebaseauth/messeged_firebaseauth_exception.dart';
 import 'package:ecom/exceptions/firebaseauth/signin_exceptions.dart';
 import 'package:ecom/screens/forgot_password/forgot_password_screen.dart';
+import 'package:ecom/screens/home/home_screen.dart';
 import 'package:ecom/services/authentification/authentification_service.dart';
+import 'package:ecom/services/database/user_database_helper.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:future_progress_dialog/future_progress_dialog.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:logger/logger.dart';
-
+import "package:http/http.dart" as http;
 import '../../../components/custom_suffix_icon.dart';
 import '../../../components/default_button.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +24,13 @@ class SignInForm extends StatefulWidget {
   _SignInFormState createState() => _SignInFormState();
 }
 
+GoogleSignIn _googleSignIn = GoogleSignIn(
+  scopes: <String>[
+    'email',
+    'https://www.googleapis.com/auth/contacts.readonly',
+  ],
+);
+
 class _SignInFormState extends State<SignInForm> {
   final _formkey = GlobalKey<FormState>();
 
@@ -28,6 +42,60 @@ class _SignInFormState extends State<SignInForm> {
     emailFieldController.dispose();
     passwordFieldController.dispose();
     super.dispose();
+  }
+
+  bool perform = false;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn googleSignIn = GoogleSignIn();
+  Future<String> signInWithGoogle() async {
+    final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
+    final GoogleSignInAuthentication googleSignInAuthentication =
+        await googleSignInAccount.authentication;
+
+    final AuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleSignInAuthentication.accessToken,
+      idToken: googleSignInAuthentication.idToken,
+    );
+
+    final UserCredential authResult =
+        await _auth.signInWithCredential(credential);
+    final User user = authResult.user;
+
+    if (user != null) {
+      assert(!user.isAnonymous);
+      assert(await user.getIdToken() != null);
+
+      final User currentUser = _auth.currentUser;
+      assert(user.uid == currentUser.uid);
+
+      print('signInWithGoogle succeeded: $user');
+
+      FirebaseFirestore.instance
+          .collection('users')
+          .getDocuments()
+          .then((value) => value.docs.forEach((element) {
+                if (element.id == user.uid) {
+                  perform = true;
+                }
+                if (perform == false) {
+                  UserDatabaseHelper().createNewUser(user.uid);
+                }
+              }));
+
+      Navigator.push(context,
+          MaterialPageRoute(builder: (BuildContext context) {
+        return HomeScreen();
+      }));
+      return '$user';
+    }
+
+    return null;
+  }
+
+  Future<void> signOutGoogle() async {
+    await googleSignIn.signOut();
+
+    print("User Signed Out");
   }
 
   @override
@@ -45,6 +113,10 @@ class _SignInFormState extends State<SignInForm> {
           DefaultButton(
             text: "Sign in",
             press: signInButtonCallback,
+          ),
+          ElevatedButton(
+            child: const Text('SIGN IN'),
+            onPressed: signInWithGoogle,
           ),
         ],
       ),

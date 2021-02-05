@@ -7,20 +7,33 @@ import 'package:ecom/screens/edit_product/edit_product_screen.dart';
 import 'package:ecom/screens/manage_addresses/manage_addresses_screen.dart';
 import 'package:ecom/screens/my_orders/my_orders_screen.dart';
 import 'package:ecom/screens/my_products/my_products_screen.dart';
+import 'package:ecom/screens/sign_in/sign_in_screen.dart';
 import 'package:ecom/services/authentification/authentification_service.dart';
 import 'package:ecom/services/database/user_database_helper.dart';
 import 'package:ecom/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:future_progress_dialog/future_progress_dialog.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:logger/logger.dart';
 import '../../change_display_name/change_display_name_screen.dart';
 
-class HomeScreenDrawer extends StatelessWidget {
+class HomeScreenDrawer extends StatefulWidget {
   const HomeScreenDrawer({
     Key key,
   }) : super(key: key);
 
+  @override
+  _HomeScreenDrawerState createState() => _HomeScreenDrawerState();
+}
+
+class _HomeScreenDrawerState extends State<HomeScreenDrawer> {
+  GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: <String>[
+      'email',
+      'https://www.googleapis.com/auth/contacts.readonly',
+    ],
+  );
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -142,7 +155,14 @@ class HomeScreenDrawer extends StatelessWidget {
             onTap: () async {
               final confirmation =
                   await showConfirmationDialog(context, "Confirm Sign out ?");
-              if (confirmation) AuthentificationService().signOut();
+              if (confirmation) {
+                AuthentificationService().signOut();
+                _googleSignIn.disconnect();
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (BuildContext context) {
+                  return SignInScreen();
+                }));
+              }
             },
           ),
         ],
