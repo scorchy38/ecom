@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "838535689634",
+    "project_id": "ecom-9a689",
+    "storage_bucket": "ecom-9a689.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:838535689634:android:e89d73a10d88b85422aefb",
+        "android_client_info": {
+          "package_name": "com.axactstudios.ecom"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "838535689634-ocgd9umcb76r8aa656vjskmi81rv26lv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjQsSmkGgzs-XHVjW3pZQadKCGpuVs9i4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "838535689634-ocgd9umcb76r8aa656vjskmi81rv26lv.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "838535689634-s70isd1kqs1olv2h72jljikf6ts5jcu2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.eCommerceAppFlutter"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:838535689634:android:b5d301f70b866b3c22aefb",
+        "android_client_info": {
+          "package_name": "com.example.e_commerce_app_flutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "838535689634-ocgd9umcb76r8aa656vjskmi81rv26lv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjQsSmkGgzs-XHVjW3pZQadKCGpuVs9i4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "838535689634-ocgd9umcb76r8aa656vjskmi81rv26lv.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "838535689634-s70isd1kqs1olv2h72jljikf6ts5jcu2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.eCommerceAppFlutter"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
