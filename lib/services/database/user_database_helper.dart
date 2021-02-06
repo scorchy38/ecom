@@ -201,7 +201,7 @@ class UserDatabaseHelper {
     print(cartItems.docs[0].data());
     for (final doc in cartItems.docs) {
       orderedProducts
-          .add(CartItem(id: doc.id, itemCount: doc.data()['itemcount']));
+          .add(CartItem(id: doc.id, itemCount: doc.data()['item_count']));
 
       await doc.reference.delete();
     }

@@ -370,35 +370,33 @@ class _BodyState extends State<Body> {
         var userId = AuthentificationService().currentUser.uid;
         List<String> productIds = [];
         List<int> quantities = [];
-        List<int> prices = [];
+        List<num> prices = [];
         Product cartItem;
-        int amount = 0;
+        num amount = 0;
         for (var v in orderedProducts) {
           productIds.add(v.id);
 
           cartItem = await ProductDatabaseHelper().getProductWithID(v.id);
-
-          // await quantities.add(v.itemCount);
+          print(v);
+          await quantities.add(v.itemCount);
           prices.add(cartItem.discountPrice);
-          // amount = amount + (cartItem.discountPrice * v.itemCount);
+          amount = amount + (cartItem.discountPrice * v.itemCount);
         }
 
         bool addedProductsToMyProducts = false;
         String snackbarmMessage;
-
+        print('Quantities ${quantities}');
         try {
-          Order o = new Order(
-            null,
-            timestamp: timestamp,
-            orderType: OrderType.COD,
-            productsOrdered: productIds,
-            userid: userId,
-            status: 'Pending',
-            prices: prices,
-            // quantities: quantities,
-            address: 'Address',
-            // amount: amount
-          );
+          Order o = new Order(null,
+              timestamp: timestamp,
+              orderType: OrderType.COD,
+              productsOrdered: productIds,
+              userid: userId,
+              status: 'Pending',
+              prices: prices,
+              quantities: quantities,
+              address: 'Address',
+              amount: amount);
           addedProductsToMyProducts =
               await OrdersDatabaseHelper().addOrderForCurrentUser(o);
           if (addedProductsToMyProducts) {

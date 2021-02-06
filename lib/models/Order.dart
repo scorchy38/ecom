@@ -18,12 +18,12 @@ class Order extends Model {
 
   List<String> productsOrdered;
   List<int> quantities;
-  List<int> prices;
+  List<num> prices;
   Timestamp timestamp;
   String userid;
   String status;
   String address;
-  int amount;
+  num amount;
   OrderType orderType;
 
   Order(String id,
