@@ -296,7 +296,7 @@ class _BodyState extends State<Body> {
             "${dateTime.day}-${dateTime.month}-${dateTime.year}";
         List<OrderedProduct> orderedProducts = orderedProductsUid
             .map((e) => OrderedProduct(null,
-                productUid: e, orderDate: formatedDateTime))
+                productUid: e.id, orderDate: formatedDateTime))
             .toList();
         bool addedProductsToMyProducts = false;
         String snackbarmMessage;

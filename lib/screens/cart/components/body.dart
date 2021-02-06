@@ -4,11 +4,14 @@ import 'package:ecom/components/nothingtoshow_container.dart';
 import 'package:ecom/components/product_short_detail_card.dart';
 import 'package:ecom/constants.dart';
 import 'package:ecom/models/CartItem.dart';
+import 'package:ecom/models/Order.dart';
 import 'package:ecom/models/OrderedProduct.dart';
 import 'package:ecom/models/Product.dart';
 import 'package:ecom/screens/cart/components/checkout_card.dart';
 import 'package:ecom/screens/product_details/product_details_screen.dart';
+import 'package:ecom/services/authentification/authentification_service.dart';
 import 'package:ecom/services/data_streams/cart_items_stream.dart';
+import 'package:ecom/services/database/orders_database_helper.dart';
 import 'package:ecom/services/database/product_database_helper.dart';
 import 'package:ecom/services/database/user_database_helper.dart';
 import 'package:ecom/size_config.dart';
@@ -355,27 +358,49 @@ class _BodyState extends State<Body> {
     shutBottomSheet();
     final confirmation = await showConfirmationDialog(
       context,
-      "Do you want to proceed for Mock Ordering of Products?",
+      "Do you want to proceed for Ordering of Products?",
     );
     if (confirmation == false) {
       return;
     }
     final orderFuture = UserDatabaseHelper().emptyCart();
-    orderFuture.then((orderedProductsUid) async {
-      if (orderedProductsUid != null) {
-        print(orderedProductsUid);
-        final dateTime = DateTime.now();
-        final formatedDateTime =
-            "${dateTime.day}-${dateTime.month}-${dateTime.year}";
-        List<OrderedProduct> orderedProducts = orderedProductsUid
-            .map((e) => OrderedProduct(null,
-                productUid: e, orderDate: formatedDateTime))
-            .toList();
+    orderFuture.then((orderedProducts) async {
+      if (orderedProducts != null) {
+        final timestamp = Timestamp.now();
+        var userId = AuthentificationService().currentUser.uid;
+        List<String> productIds = [];
+        List<int> quantities = [];
+        List<int> prices = [];
+        Product cartItem;
+        int amount = 0;
+        for (var v in orderedProducts) {
+          productIds.add(v.id);
+
+          cartItem = await ProductDatabaseHelper().getProductWithID(v.id);
+
+          // await quantities.add(v.itemCount);
+          prices.add(cartItem.discountPrice);
+          // amount = amount + (cartItem.discountPrice * v.itemCount);
+        }
+
         bool addedProductsToMyProducts = false;
         String snackbarmMessage;
+
         try {
+          Order o = new Order(
+            null,
+            timestamp: timestamp,
+            orderType: OrderType.COD,
+            productsOrdered: productIds,
+            userid: userId,
+            status: 'Pending',
+            prices: prices,
+            // quantities: quantities,
+            address: 'Address',
+            // amount: amount
+          );
           addedProductsToMyProducts =
-              await UserDatabaseHelper().addToMyOrders(orderedProducts);
+              await OrdersDatabaseHelper().addOrderForCurrentUser(o);
           if (addedProductsToMyProducts) {
             snackbarmMessage = "Products ordered Successfully";
           } else {

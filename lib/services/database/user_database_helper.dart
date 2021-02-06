@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecom/models/Address.dart';
 import 'package:ecom/models/CartItem.dart';
 import 'package:ecom/models/OrderedProduct.dart';
+import 'package:ecom/models/Product.dart';
 import 'package:ecom/services/authentification/authentification_service.dart';
 import 'package:ecom/services/database/product_database_helper.dart';
 
@@ -189,19 +190,22 @@ class UserDatabaseHelper {
     return true;
   }
 
-  Future<List<String>> emptyCart() async {
+  Future<List<CartItem>> emptyCart() async {
     String uid = AuthentificationService().currentUser.uid;
     final cartItems = await firestore
         .collection(USERS_COLLECTION_NAME)
         .doc(uid)
         .collection(CART_COLLECTION_NAME)
         .get();
-    List orderedProductsUid = List<String>();
+    List orderedProducts = List<CartItem>();
+    print(cartItems.docs[0].data());
     for (final doc in cartItems.docs) {
-      orderedProductsUid.add(doc.id);
+      orderedProducts
+          .add(CartItem(id: doc.id, itemCount: doc.data()['itemcount']));
+
       await doc.reference.delete();
     }
-    return orderedProductsUid;
+    return orderedProducts;
   }
 
   Future<num> get cartTotal async {
