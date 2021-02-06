@@ -49,10 +49,12 @@ class _ReviewBoxState extends State<ReviewBox> {
                 Expanded(
                     child: url != null
                         ? CircleAvatar(
+                            radius: 40,
                             backgroundImage: NetworkImage(url),
                           )
                         : CircleAvatar(
-                      backgroundColor: Colors.grey,
+                            radius: 40,
+                            backgroundColor: kTextColor.withOpacity(0.1),
                             child: SvgPicture.asset(
                               "assets/icons/User.svg",
                               color: kTextColor,
