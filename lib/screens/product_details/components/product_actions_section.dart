@@ -29,10 +29,10 @@ class ProductActionsSection extends StatelessWidget {
             TopRoundedContainer(
               child: ProductDescription(product: product),
             ),
-            Align(
-              alignment: Alignment.topCenter,
-              child: buildFavouriteButton(),
-            ),
+//            Align(
+//              alignment: Alignment.topCenter,
+//              child: buildFavouriteButton(),
+//            ),
           ],
         ),
       ],

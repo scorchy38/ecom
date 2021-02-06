@@ -54,7 +54,7 @@ flutter:
     - assets/images/
     - illustrations/
     - assets/icons/
-
+    - assets/icons/User.png
   fonts:
     - family: Muli
       fonts:

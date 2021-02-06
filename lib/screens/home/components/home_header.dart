@@ -21,6 +21,7 @@ class HomeHeader extends StatelessWidget {
         RoundedIconButton(
             iconData: Icons.menu,
             press: () {
+              print(2);
               Scaffold.of(context).openDrawer();
             }),
         Expanded(

@@ -22,7 +22,7 @@ class ProductImages extends StatelessWidget {
       create: (context) => ProductImageSwiper(),
       child: Consumer<ProductImageSwiper>(
         builder: (context, productImagesSwiper, child) {
-          return Column(
+          return Row(
             children: [
               SwipeDetector(
                 onSwipeLeft: () {
@@ -41,26 +41,24 @@ class ProductImages extends StatelessWidget {
 //                PinchZoomImage(
 //                  image:
                     Container(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.all(
-                      Radius.circular(30),
+                      Radius.circular(15),
                     ),
                   ),
                   child: SizedBox(
-                    height: SizeConfig.screenHeight * 0.35,
-                    width: SizeConfig.screenWidth * 0.75,
+                    height: SizeConfig.screenHeight * 0.3,
+                    width: SizeConfig.screenWidth * 0.7,
                     child: Image.network(
-                      product.images[productImagesSwiper.currentImageIndex],
-                      fit: BoxFit.contain,
-                    ),
+                        product.images[productImagesSwiper.currentImageIndex],
+                        fit: BoxFit.contain),
                   ),
                 ),
               ),
 //              ),
-              SizedBox(height: 16),
-              Row(
+              Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ...List.generate(
@@ -83,21 +81,28 @@ class ProductImages extends StatelessWidget {
       onTap: () {
         productImagesSwiper.currentImageIndex = index;
       },
-      child: Container(
-        margin:
-            EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(8)),
-        padding: EdgeInsets.all(getProportionateScreenHeight(8)),
-        height: getProportionateScreenWidth(48),
-        width: getProportionateScreenWidth(48),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-              color: productImagesSwiper.currentImageIndex == index
-                  ? kPrimaryColor
-                  : Colors.transparent),
-        ),
-        child: Image.network(product.images[index]),
+      child: Column(
+        children: [
+          Container(
+            margin: EdgeInsets.symmetric(
+                horizontal: getProportionateScreenWidth(8)),
+            padding: EdgeInsets.all(getProportionateScreenHeight(8)),
+            height: getProportionateScreenWidth(58),
+            width: getProportionateScreenWidth(58),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                  color: productImagesSwiper.currentImageIndex == index
+                      ? kPrimaryColor
+                      : Colors.transparent),
+            ),
+            child: Image.network(product.images[index]),
+          ),
+          SizedBox(
+            height: 5,
+          )
+        ],
       ),
     );
   }

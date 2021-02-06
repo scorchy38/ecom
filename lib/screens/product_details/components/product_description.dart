@@ -1,4 +1,6 @@
 import 'package:ecom/models/Product.dart';
+import 'package:ecom/screens/product_details/components/product_actions_section.dart';
+import 'package:ecom/screens/product_details/components/product_review_section.dart';
 import 'package:ecom/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -20,23 +22,33 @@ class ProductDescription extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text.rich(
-              TextSpan(
-                  text: product.title,
-                  style: TextStyle(
-                    fontSize: 21,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  children: [
-                    TextSpan(
-                      text: "\n${product.variant} ",
+            Align(
+              alignment: Alignment.topLeft,
+              child: buildProductRatingWidget(product.rating),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text.rich(
+                  TextSpan(
+                      text: product.title,
                       style: TextStyle(
-                        fontWeight: FontWeight.normal,
-                        fontSize: 15,
+                        fontSize: 21,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w600,
                       ),
-                    ),
-                  ]),
+                      children: [
+                        TextSpan(
+                          text: "\n${product.variant} ",
+                          style: TextStyle(
+                            fontWeight: FontWeight.normal,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ]),
+                ),
+                ProductActionsSection(product: product).buildFavouriteButton(),
+              ],
             ),
             const SizedBox(height: 16),
             SizedBox(
@@ -69,7 +81,7 @@ class ProductDescription extends StatelessWidget {
                     ),
                   ),
                   Flexible(
-                    flex: 3,
+                    flex: 1,
                     child: Stack(
                       children: [
                         SvgPicture.asset(
@@ -95,14 +107,15 @@ class ProductDescription extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             ExpandableText(
+              maxLines: 2,
               title: "Highlights",
               content: product.highlights,
             ),
-            const SizedBox(height: 16),
-            ExpandableText(
-              title: "Description",
-              content: product.description,
-            ),
+//            const SizedBox(height: 16),
+//            ExpandableText(
+//              title: "Description",
+//              content: product.description,
+//            ),
             // const SizedBox(height: 16),
             // Text.rich(
             //   TextSpan(
@@ -124,6 +137,37 @@ class ProductDescription extends StatelessWidget {
           ],
         ),
       ],
+    );
+  }
+
+  Widget buildProductRatingWidget(num rating) {
+    return Container(
+      width: getProportionateScreenWidth(80),
+      padding: EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: Colors.amber,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Text(
+              "$rating",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w900,
+                fontSize: getProportionateScreenWidth(14),
+              ),
+            ),
+          ),
+          SizedBox(width: 5),
+          Icon(
+            Icons.star,
+            color: Colors.white,
+          ),
+        ],
+      ),
     );
   }
 }
