@@ -29,23 +29,26 @@ class ProductDescription extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text.rich(
-                  TextSpan(
-                      text: product.title,
-                      style: TextStyle(
-                        fontSize: 21,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      children: [
-                        TextSpan(
-                          text: "\n${product.variant} ",
-                          style: TextStyle(
-                            fontWeight: FontWeight.normal,
-                            fontSize: 15,
-                          ),
+                Flexible(
+                  child: Text.rich(
+                    TextSpan(
+                        text: product.title,
+                        style: TextStyle(
+                          fontSize: 21,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w600,
                         ),
-                      ]),
+                        children: [
+                          TextSpan(
+                            text: "\n${product.variant} ",
+                            style: TextStyle(
+                              fontWeight: FontWeight.normal,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ]),
+                    maxLines: 2,
+                  ),
                 ),
                 ProductActionsSection(product: product).buildFavouriteButton(),
               ],

@@ -8,11 +8,13 @@ import '../size_config.dart';
 
 class ProductShortDetailCard extends StatelessWidget {
   final String productId;
+  final String quantity;
   final VoidCallback onPressed;
   const ProductShortDetailCard({
     Key key,
     @required this.productId,
     @required this.onPressed,
+    @required this.quantity,
   }) : super(key: key);
 
   @override
@@ -43,6 +45,7 @@ class ProductShortDetailCard extends StatelessWidget {
                 ),
                 SizedBox(width: getProportionateScreenWidth(20)),
                 Expanded(
+                  flex: 4,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -51,7 +54,7 @@ class ProductShortDetailCard extends StatelessWidget {
                         softWrap: true,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 13,
+                          fontSize: 15,
                           fontWeight: FontWeight.bold,
                           color: kTextColor,
                         ),
@@ -64,7 +67,7 @@ class ProductShortDetailCard extends StatelessWidget {
                             style: TextStyle(
                               color: kPrimaryColor,
                               fontWeight: FontWeight.w700,
-                              fontSize: 12,
+                              fontSize: 13,
                             ),
                             children: [
                               TextSpan(
@@ -73,7 +76,7 @@ class ProductShortDetailCard extends StatelessWidget {
                                   color: kTextColor,
                                   decoration: TextDecoration.lineThrough,
                                   fontWeight: FontWeight.normal,
-                                  fontSize: 11,
+                                  fontSize: 12,
                                 ),
                               ),
                             ]),
@@ -81,10 +84,30 @@ class ProductShortDetailCard extends StatelessWidget {
                     ],
                   ),
                 ),
+                SizedBox(width: getProportionateScreenWidth(20)),
+                quantity != null
+                    ? Expanded(
+                        flex: 1,
+                        child: Text(
+                          'X ${quantity}',
+                          softWrap: true,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: kTextColor,
+                          ),
+                          maxLines: 2,
+                        ),
+                      )
+                    : Container(),
               ],
             );
           } else if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return Center(
+                child: CircularProgressIndicator(
+              backgroundColor: kPrimaryColor,
+            ));
           } else if (snapshot.hasError) {
             final errorMessage = snapshot.error.toString();
             Logger().e(errorMessage);

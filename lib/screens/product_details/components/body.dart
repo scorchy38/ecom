@@ -30,10 +30,11 @@ class Body extends StatelessWidget {
                 final product = snapshot.data;
                 return Column(
                   children: [
-                    ProductImages(product: product),
-                    SizedBox(height: getProportionateScreenHeight(20)),
+                    SizedBox(
+                        height: 300, child: ProductImages(product: product)),
+                    SizedBox(height: getProportionateScreenHeight(10)),
                     ProductActionsSection(product: product),
-                    SizedBox(height: getProportionateScreenHeight(20)),
+                    SizedBox(height: getProportionateScreenHeight(10)),
                     ProductReviewsSection(product: product),
                     SizedBox(height: getProportionateScreenHeight(100)),
                   ],

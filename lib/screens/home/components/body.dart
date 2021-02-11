@@ -10,9 +10,11 @@ import 'package:ecom/screens/search_result/search_result_screen.dart';
 import 'package:ecom/screens/wishlist/wishlist_screen.dart';
 import 'package:ecom/services/authentification/authentification_service.dart';
 import 'package:ecom/services/data_streams/all_products_stream.dart';
+import 'package:ecom/services/data_streams/cart_items_stream.dart';
 import 'package:ecom/services/data_streams/category_products_stream.dart';
 import 'package:ecom/services/data_streams/favourite_products_stream.dart';
 import 'package:ecom/services/database/product_database_helper.dart';
+import 'package:ecom/services/database/user_database_helper.dart';
 import 'package:ecom/size_config.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
@@ -36,35 +38,35 @@ class Body extends StatefulWidget {
 class _BodyState extends State<Body> {
   final productCategories = <Map>[
     <String, dynamic>{
-      ICON_KEY: "assets/icons/Electronics.svg",
+      ICON_KEY: "assets/icons/dress.svg",
       TITLE_KEY: "Sarojini Market",
       PRODUCT_TYPE_KEY: ProductType.Fashion,
     },
     <String, dynamic>{
-      ICON_KEY: "assets/icons/Books.svg",
+      ICON_KEY: "assets/icons/decor.svg",
       TITLE_KEY: "Janpath Market",
-      PRODUCT_TYPE_KEY: ProductType.Books,
+      PRODUCT_TYPE_KEY: ProductType.HomeDecor,
     },
     <String, dynamic>{
-      ICON_KEY: "assets/icons/Fashion.svg",
+      ICON_KEY: "assets/icons/electronic.svg",
       TITLE_KEY: "Dilli Haat",
       PRODUCT_TYPE_KEY: ProductType.Electronics,
     },
     <String, dynamic>{
-      ICON_KEY: "assets/icons/Groceries.svg",
-      TITLE_KEY: "Paharganj Market",
-      PRODUCT_TYPE_KEY: ProductType.Groceries,
+      ICON_KEY: "assets/icons/earrings.svg",
+      TITLE_KEY: "Cannaught Place",
+      PRODUCT_TYPE_KEY: ProductType.Handicrafts,
     },
     <String, dynamic>{
-      ICON_KEY: "assets/icons/Art.svg",
-      TITLE_KEY: "Lajpat Nagar",
+      ICON_KEY: "assets/icons/vase.svg",
+      TITLE_KEY: "Paharganj Market",
       PRODUCT_TYPE_KEY: ProductType.Art,
     },
-    <String, dynamic>{
-      ICON_KEY: "assets/icons/Others.svg",
-      TITLE_KEY: "Karol Bagh",
-      PRODUCT_TYPE_KEY: ProductType.Others,
-    },
+    // <String, dynamic>{
+    //   ICON_KEY: "assets/icons/Others.svg",
+    //   TITLE_KEY: "Karol Bagh",
+    //   PRODUCT_TYPE_KEY: ProductType.Others,
+    // },
   ];
 
   final FavouriteProductsStream favouriteProductsStream =
@@ -74,6 +76,7 @@ class _BodyState extends State<Body> {
       CategoryProductsStream(ProductType.Fashion);
   final CategoryProductsStream dilliHaatElectronicsStream =
       CategoryProductsStream(ProductType.Electronics);
+  final CartItemsStream cartItemsStream = CartItemsStream();
 
   @override
   void initState() {
@@ -83,13 +86,15 @@ class _BodyState extends State<Body> {
     allProductsStream.init();
     sarojiniFashionStream.init();
     dilliHaatElectronicsStream.init();
+    cartItemsStream.init();
   }
 
   List<String> adBanners = [];
   String donationBanner = '';
+  int cartLen;
   getBanners() async {
     final firestoreInstance = FirebaseFirestore.instance;
-
+    cartLen = await UserDatabaseHelper().getCartLength();
     await firestoreInstance.collection("banners").get().then((querySnapshot) {
       querySnapshot.docs.forEach((result) {
         if (result.data()['type'] == 'adBanner')
@@ -106,12 +111,13 @@ class _BodyState extends State<Body> {
     allProductsStream.dispose();
     sarojiniFashionStream.dispose();
     dilliHaatElectronicsStream.dispose();
+    cartItemsStream.dispose();
     super.dispose();
   }
 
   List imageList = [
-    'https://firebasestorage.googleapis.com/v0/b/ecom-9a689.appspot.com/o/Screenshot%202021-02-05%20at%203.24.31%20PM.png?alt=media&token=2cbef62b-f220-4efe-ae76-2f88e70509f9',
-    'https://firebasestorage.googleapis.com/v0/b/ecom-9a689.appspot.com/o/1548519881_maxresdefault.jpg?alt=media&token=442054ae-7461-4890-a4a5-b4be0dd62e18'
+    'https://firebasestorage.googleapis.com/v0/b/ecom-9a689.appspot.com/o/Screenshot%202021-02-09%20at%203.28.45%20PM.png?alt=media&token=816f535f-7a05-4bea-b415-5bbaa698f5c8',
+    'https://firebasestorage.googleapis.com/v0/b/ecom-9a689.appspot.com/o/Screenshot%202021-02-09%20at%203.33.09%20PM.png?alt=media&token=36a3ab05-dd7f-4909-a48f-8297dea48057'
   ];
   //        floatingActionButton: InkWell(
 //          onTap: () async {
@@ -205,6 +211,8 @@ class _BodyState extends State<Body> {
               children: [
                 SizedBox(height: getProportionateScreenHeight(15)),
                 HomeHeader(
+                  cartLen: cartLen,
+                  cartItemsStream: cartItemsStream,
                   onSearchSubmitted: (value) async {
                     final query = value.toString();
                     if (query.length <= 0) return;
@@ -264,6 +272,37 @@ class _BodyState extends State<Body> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => CartScreen(),
+                      ),
+                    );
+                    await refreshPage();
+                  },
+                  onWishlistButtonPressed: () async {
+                    bool allowed =
+                        AuthentificationService().currentUserVerified;
+                    if (!allowed) {
+                      final reverify = await showConfirmationDialog(context,
+                          "You haven't verified your email address. This action is only allowed for verified users.",
+                          positiveResponse: "Resend verification email",
+                          negativeResponse: "Go back");
+                      if (reverify) {
+                        final future = AuthentificationService()
+                            .sendVerificationEmailToCurrentUser();
+                        await showDialog(
+                          context: context,
+                          builder: (context) {
+                            return FutureProgressDialog(
+                              future,
+                              message: Text("Resending verification email"),
+                            );
+                          },
+                        );
+                      }
+                      return;
+                    }
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => WishlistScreen(),
                       ),
                     );
                     await refreshPage();
@@ -354,9 +393,10 @@ class _BodyState extends State<Body> {
                 // ),
                 SizedBox(height: getProportionateScreenHeight(20)),
                 SizedBox(
-                  height: SizeConfig.screenHeight * 0.4,
+                  height: SizeConfig.screenWidth * 1.6,
                   child: ProductsSection(
                     sectionTitle: "Explore Sarojini Market",
+                    productType: ProductType.Fashion,
                     productsStreamController: sarojiniFashionStream,
                     emptyListMessage: "Looks like all Stores are closed",
                     onProductCardTapped: onProductCardTapped,
@@ -364,10 +404,11 @@ class _BodyState extends State<Body> {
                 ),
                 SizedBox(height: getProportionateScreenHeight(20)),
                 SizedBox(
-                  height: SizeConfig.screenHeight * 0.4,
+                  height: SizeConfig.screenWidth * 1.6,
                   child: ProductsSection(
                     sectionTitle: "Explore Dilli Haat",
                     productsStreamController: dilliHaatElectronicsStream,
+                    productType: ProductType.Electronics,
                     emptyListMessage: "Looks like all Stores are closed",
                     onProductCardTapped: onProductCardTapped,
                   ),
@@ -391,31 +432,32 @@ class _BodyState extends State<Body> {
 
                 SizedBox(height: getProportionateScreenHeight(20)),
                 SizedBox(
-                  height: SizeConfig.screenHeight * 0.4,
+                  height: SizeConfig.screenWidth * 1.6,
                   child: ProductsSection(
+                    productType: ProductType.Others,
                     sectionTitle: "Explore All Products",
                     productsStreamController: allProductsStream,
                     emptyListMessage: "Looks like all Stores are closed",
                     onProductCardTapped: onProductCardTapped,
                   ),
                 ),
-                SizedBox(height: getProportionateScreenHeight(20)),
-                Container(
-                  width: SizeConfig.screenWidth,
-                  height: 50,
-                  decoration: BoxDecoration(
-                      color: kPrimaryColor,
-                      borderRadius: BorderRadius.all(Radius.circular(10))),
-                  child: Center(
-                    child: Text(
-                      'Your Wishlist',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700),
-                    ),
-                  ),
-                ),
+                // SizedBox(height: getProportionateScreenHeight(20)),
+                // Container(
+                //   width: SizeConfig.screenWidth,
+                //   height: 50,
+                //   decoration: BoxDecoration(
+                //       color: kPrimaryColor,
+                //       borderRadius: BorderRadius.all(Radius.circular(10))),
+                //   child: Center(
+                //     child: Text(
+                //       'Your Wishlist',
+                //       style: TextStyle(
+                //           color: Colors.white,
+                //           fontSize: 20,
+                //           fontWeight: FontWeight.w700),
+                //     ),
+                //   ),
+                // ),
                 SizedBox(height: getProportionateScreenHeight(30)),
               ],
             ),
@@ -430,6 +472,7 @@ class _BodyState extends State<Body> {
     allProductsStream.reload();
     sarojiniFashionStream.reload();
     dilliHaatElectronicsStream.reload();
+    cartItemsStream.reload();
     return Future<void>.value();
   }
 

@@ -3,10 +3,11 @@ import 'package:enum_to_string/enum_to_string.dart';
 
 enum ProductType {
   Electronics,
-  Books,
+  HomeDecor,
   Fashion,
-  Groceries,
+  Handicrafts,
   Art,
+  Jewellery,
   Others,
 }
 

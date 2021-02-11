@@ -93,7 +93,7 @@ class Body extends StatelessWidget {
                 crossAxisCount: 2,
                 childAspectRatio: 0.7,
                 crossAxisSpacing: 4,
-                mainAxisSpacing: 4,
+                mainAxisSpacing: 18,
               ),
               itemCount: searchResultProductsId.length,
               itemBuilder: (context, index) {

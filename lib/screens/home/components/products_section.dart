@@ -1,5 +1,8 @@
 import 'package:ecom/components/nothingtoshow_container.dart';
 import 'package:ecom/components/product_card.dart';
+import 'package:ecom/constants.dart';
+import 'package:ecom/models/Product.dart';
+import 'package:ecom/screens/category_products/category_products_screen.dart';
 import 'package:ecom/screens/home/components/section_tile.dart';
 import 'package:ecom/services/data_streams/data_stream.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +12,7 @@ import '../../../size_config.dart';
 
 class ProductsSection extends StatelessWidget {
   final String sectionTitle;
+  final ProductType productType;
   final DataStream productsStreamController;
   final String emptyListMessage;
   final Function onProductCardTapped;
@@ -17,6 +21,7 @@ class ProductsSection extends StatelessWidget {
     @required this.sectionTitle,
     @required this.productsStreamController,
     this.emptyListMessage = "No Products to show here",
+    this.productType,
     @required this.onProductCardTapped,
   }) : super(key: key);
 
@@ -28,14 +33,23 @@ class ProductsSection extends StatelessWidget {
         vertical: 16,
       ),
       decoration: BoxDecoration(
-        color: Color(0xFFE8E9F3),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(15),
       ),
       child: Column(
         children: [
           SectionTile(
             title: sectionTitle,
-            press: () {},
+            press: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CategoryProductsScreen(
+                    productType: productType,
+                  ),
+                ),
+              );
+            },
           ),
           SizedBox(height: getProportionateScreenHeight(15)),
           Expanded(
@@ -79,17 +93,17 @@ class ProductsSection extends StatelessWidget {
   }
 
   Widget buildProductGrid(List<String> productsId) {
-    return ListView.builder(
+    return GridView.builder(
       shrinkWrap: true,
       physics: BouncingScrollPhysics(),
-      scrollDirection: Axis.horizontal,
-      // gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-      //   crossAxisCount: 2,
-      //   childAspectRatio: 0.7,
-      //   crossAxisSpacing: 4,
-      //   mainAxisSpacing: 4,
-      // ),
-      itemCount: productsId.length,
+      // scrollDirection: Axis.horizontal,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 0.65,
+        crossAxisSpacing: 3,
+        mainAxisSpacing: 20,
+      ),
+      itemCount: 4,
       itemBuilder: (context, index) {
         return ProductCard(
           productId: productsId[index],

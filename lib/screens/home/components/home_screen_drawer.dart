@@ -49,7 +49,9 @@ class _HomeScreenDrawerState extends State<HomeScreenDrawer> {
                 } else if (snapshot.connectionState ==
                     ConnectionState.waiting) {
                   return Center(
-                    child: CircularProgressIndicator(),
+                    child: CircularProgressIndicator(
+                      backgroundColor: kSecondaryColor,
+                    ),
                   );
                 } else {
                   return Center(
@@ -174,7 +176,7 @@ class _HomeScreenDrawerState extends State<HomeScreenDrawer> {
     return UserAccountsDrawerHeader(
       margin: EdgeInsets.zero,
       decoration: BoxDecoration(
-        color: kTextColor.withOpacity(0.15),
+        color: kPrimaryColor.withOpacity(0.15),
       ),
       accountEmail: Text(
         user.email ?? "No Email",
@@ -196,18 +198,21 @@ class _HomeScreenDrawerState extends State<HomeScreenDrawer> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return CircleAvatar(
+              backgroundColor: kSecondaryColor,
               backgroundImage: NetworkImage(snapshot.data),
             );
           } else if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                backgroundColor: kSecondaryColor,
+              ),
             );
           } else if (snapshot.hasError) {
             final error = snapshot.error;
             Logger().w(error.toString());
           }
           return CircleAvatar(
-            backgroundColor: kTextColor,
+            backgroundColor: kSecondaryColor,
           );
         },
       ),

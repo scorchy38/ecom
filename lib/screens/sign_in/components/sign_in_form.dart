@@ -5,9 +5,11 @@ import 'package:ecom/exceptions/firebaseauth/messeged_firebaseauth_exception.dar
 import 'package:ecom/exceptions/firebaseauth/signin_exceptions.dart';
 import 'package:ecom/screens/forgot_password/forgot_password_screen.dart';
 import 'package:ecom/screens/home/home_screen.dart';
+import 'package:ecom/screens/root_screen/root_screen.dart';
 import 'package:ecom/services/authentification/authentification_service.dart';
 import 'package:ecom/services/database/user_database_helper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:future_progress_dialog/future_progress_dialog.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:logger/logger.dart';
@@ -70,21 +72,20 @@ class _SignInFormState extends State<SignInForm> {
 
       print('signInWithGoogle succeeded: $user');
 
-      FirebaseFirestore.instance
+      await FirebaseFirestore.instance
           .collection('users')
           .getDocuments()
           .then((value) => value.docs.forEach((element) {
                 if (element.id == user.uid) {
                   perform = true;
                 }
-                if (perform == false) {
-                  UserDatabaseHelper().createNewUser(user.uid);
-                }
               }));
-
+      if (perform == false) {
+        UserDatabaseHelper().createNewUser(user.uid);
+      }
       Navigator.push(context,
           MaterialPageRoute(builder: (BuildContext context) {
-        return HomeScreen();
+        return RootScreen();
       }));
       return '$user';
     }
@@ -114,9 +115,42 @@ class _SignInFormState extends State<SignInForm> {
             text: "Sign in",
             press: signInButtonCallback,
           ),
-          ElevatedButton(
-            child: const Text('SIGN IN'),
-            onPressed: signInWithGoogle,
+          SizedBox(height: getProportionateScreenHeight(30)),
+          InkWell(
+            child: Container(
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      width: 10,
+                    ),
+                    SvgPicture.asset(
+                      'assets/icons/google.svg',
+                      height: 30,
+                      width: 30,
+                    ),
+                    Text('  SIGN IN'),
+                    SizedBox(
+                      width: 10,
+                    ),
+                  ],
+                ),
+              ),
+              decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: kPrimaryColor.withOpacity(0.15),
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: Offset(0, 3), // changes position of shadow
+                    ),
+                  ],
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(10))),
+            ),
+            onTap: signInWithGoogle,
           ),
         ],
       ),
@@ -217,6 +251,12 @@ class _SignInFormState extends State<SignInForm> {
         );
         if (signInStatus == true) {
           snackbarMessage = "Signed In Successfully";
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => RootScreen(),
+            ),
+          );
         } else {
           throw FirebaseSignInAuthUnknownReasonFailure();
         }

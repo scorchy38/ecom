@@ -1,9 +1,17 @@
+import 'package:ecom/screens/product_details/provider_models/ProductActions.dart';
+import 'package:ecom/services/authentification/authentification_service.dart';
 import 'package:ecom/services/database/product_database_helper.dart';
+import 'package:ecom/services/database/user_database_helper.dart';
+import 'package:ecom/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:future_progress_dialog/future_progress_dialog.dart';
 import 'package:logger/logger.dart';
+import 'package:provider/provider.dart';
 import '../constants.dart';
 import 'package:ecom/models/Product.dart';
+
+import '../utils.dart';
 
 class ProductCard extends StatelessWidget {
   final String productId;
@@ -21,22 +29,22 @@ class ProductCard extends StatelessWidget {
       child: GestureDetector(
         onTap: press,
         child: Container(
-          width: 170,
+          width: 180,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: kPrimaryColor.withOpacity(0.05),
             border: Border.all(color: kTextColor.withOpacity(0.15)),
             borderRadius: BorderRadius.all(
-              Radius.circular(16),
+              Radius.circular(10),
             ),
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+            padding: const EdgeInsets.all(8.0),
             child: FutureBuilder<Product>(
               future: ProductDatabaseHelper().getProductWithID(productId),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   final Product product = snapshot.data;
-                  return buildProductCardItems(product);
+                  return buildProductCardItems(product, context);
                 } else if (snapshot.connectionState ==
                     ConnectionState.waiting) {
                   return Center(
@@ -61,18 +69,16 @@ class ProductCard extends StatelessWidget {
     );
   }
 
-  Column buildProductCardItems(Product product) {
+  Column buildProductCardItems(Product product, BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Flexible(
-          flex: 3,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Image.network(
-              product.images[0],
-              fit: BoxFit.contain,
-            ),
+        Container(
+          width: SizeConfig.screenWidth * 0.35,
+          height: SizeConfig.screenWidth * 0.4,
+          child: Image.network(
+            product.images[0],
+            fit: BoxFit.contain,
           ),
         ),
         SizedBox(height: 10),
@@ -87,7 +93,7 @@ class ProductCard extends StatelessWidget {
                   "${product.title}\n",
                   style: TextStyle(
                     color: kTextColor,
-                    fontSize: 13,
+                    fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
                   maxLines: 2,
@@ -95,20 +101,21 @@ class ProductCard extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 5),
-              Flexible(
-                flex: 1,
+              Container(
+                height: 43,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Flexible(
                       flex: 5,
                       child: Text.rich(
                         TextSpan(
-                          text: "\₹${product.discountPrice}\n",
+                          text: "\₹${product.discountPrice} ",
                           style: TextStyle(
                             color: kPrimaryColor,
                             fontWeight: FontWeight.w700,
-                            fontSize: 12,
+                            fontSize: 17,
                           ),
                           children: [
                             TextSpan(
@@ -117,7 +124,7 @@ class ProductCard extends StatelessWidget {
                                 color: kTextColor,
                                 decoration: TextDecoration.lineThrough,
                                 fontWeight: FontWeight.normal,
-                                fontSize: 11,
+                                fontSize: 13,
                               ),
                             ),
                           ],
@@ -125,27 +132,117 @@ class ProductCard extends StatelessWidget {
                       ),
                     ),
                     Flexible(
-                      flex: 3,
-                      child: Stack(
-                        children: [
-                          SvgPicture.asset(
-                            "assets/icons/DiscountTag.svg",
-                            color: kPrimaryColor,
-                          ),
-                          Center(
-                            child: Text(
-                              "${product.calculatePercentageDiscount()}%\nOff",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 8,
-                                fontWeight: FontWeight.w900,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                      flex: 2,
+                      child: ChangeNotifierProvider(
+                          create: (context) => ProductActions(),
+                          child: FutureBuilder<Product>(
+                              future: ProductDatabaseHelper()
+                                  .getProductWithID(productId),
+                              builder: (context, snapshot) {
+                                return Consumer<ProductActions>(
+                                  builder: (context, productDetails, child) {
+                                    return InkWell(
+                                      onTap: () async {
+                                        bool allowed = AuthentificationService()
+                                            .currentUserVerified;
+                                        if (!allowed) {
+                                          final reverify =
+                                              await showConfirmationDialog(
+                                                  context,
+                                                  "You haven't verified your email address. This action is only allowed for verified users.",
+                                                  positiveResponse:
+                                                      "Resend verification email",
+                                                  negativeResponse: "Go back");
+                                          if (reverify) {
+                                            final future = AuthentificationService()
+                                                .sendVerificationEmailToCurrentUser();
+                                            await showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return FutureProgressDialog(
+                                                  future,
+                                                  message: Text(
+                                                      "Resending verification email"),
+                                                );
+                                              },
+                                            );
+                                          }
+                                          return;
+                                        }
+                                        bool success = false;
+                                        final future = UserDatabaseHelper()
+                                            .switchProductFavouriteStatus(
+                                                product.id,
+                                                !productDetails
+                                                    .productFavStatus)
+                                            .then(
+                                          (status) {
+                                            success = status;
+                                          },
+                                        ).catchError(
+                                          (e) {
+                                            Logger().e(e.toString());
+                                            success = false;
+                                          },
+                                        );
+                                        await showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return FutureProgressDialog(
+                                              future,
+                                              message: Text(
+                                                productDetails.productFavStatus
+                                                    ? "Removing from Favourites"
+                                                    : "Adding to Favourites",
+                                              ),
+                                            );
+                                          },
+                                        );
+                                        if (success) {
+                                          productDetails
+                                              .switchProductFavStatus();
+                                        }
+                                      },
+                                      child: Container(
+                                        child: productDetails.productFavStatus
+                                            ? Icon(
+                                                Icons.favorite,
+                                                color: kPrimaryColor,
+                                                size: 30,
+                                              )
+                                            : Icon(
+                                                Icons.favorite_outline,
+                                                color: kPrimaryColor,
+                                                size: 30,
+                                              ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              })),
+                    )
+                    // Flexible(
+                    //   flex: 3,
+                    //   child: Stack(
+                    //     children: [
+                    //       SvgPicture.asset(
+                    //         "assets/icons/DiscountTag.svg",
+                    //         color: kPrimaryColor,
+                    //       ),
+                    //       Center(
+                    //         child: Text(
+                    //           "${product.calculatePercentageDiscount()}%\nOff",
+                    //           style: TextStyle(
+                    //             color: Colors.white,
+                    //             fontSize: 8,
+                    //             fontWeight: FontWeight.w900,
+                    //           ),
+                    //           textAlign: TextAlign.center,
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
                   ],
                 ),
               ),

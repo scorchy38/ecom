@@ -22,53 +22,61 @@ class ProductImages extends StatelessWidget {
       create: (context) => ProductImageSwiper(),
       child: Consumer<ProductImageSwiper>(
         builder: (context, productImagesSwiper, child) {
-          return Row(
-            children: [
-              SwipeDetector(
-                onSwipeLeft: () {
-                  productImagesSwiper.currentImageIndex++;
-                  productImagesSwiper.currentImageIndex %=
-                      product.images.length;
-                },
-                onSwipeRight: () {
-                  productImagesSwiper.currentImageIndex--;
-                  productImagesSwiper.currentImageIndex +=
-                      product.images.length;
-                  productImagesSwiper.currentImageIndex %=
-                      product.images.length;
-                },
-                child:
+          return Container(
+            height: 300,
+            width: SizeConfig.screenWidth,
+            child: Row(
+              children: [
+                Expanded(
+                  child: SwipeDetector(
+                    onSwipeLeft: () {
+                      productImagesSwiper.currentImageIndex++;
+                      productImagesSwiper.currentImageIndex %=
+                          product.images.length;
+                    },
+                    onSwipeRight: () {
+                      productImagesSwiper.currentImageIndex--;
+                      productImagesSwiper.currentImageIndex +=
+                          product.images.length;
+                      productImagesSwiper.currentImageIndex %=
+                          product.images.length;
+                    },
+                    child:
 //                PinchZoomImage(
 //                  image:
-                    Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(15),
+                        Container(
+                      // padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.network(
+                            product
+                                .images[productImagesSwiper.currentImageIndex],
+                            fit: BoxFit.fill),
+                      ),
                     ),
                   ),
-                  child: SizedBox(
-                    height: SizeConfig.screenHeight * 0.3,
-                    width: SizeConfig.screenWidth * 0.7,
-                    child: Image.network(
-                        product.images[productImagesSwiper.currentImageIndex],
-                        fit: BoxFit.contain),
+                ),
+//              ),
+
+                Container(
+                  height: 300,
+                  width: 100,
+                  child: ListView.builder(
+                    itemCount: product.images.length,
+                    itemBuilder: (context, index) {
+                      return buildSmallPreview(productImagesSwiper,
+                          index: index);
+                    },
                   ),
                 ),
-              ),
-//              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ...List.generate(
-                    product.images.length,
-                    (index) =>
-                        buildSmallPreview(productImagesSwiper, index: index),
-                  ),
-                ],
-              ),
-            ],
+              ],
+            ),
           );
         },
       ),
@@ -86,18 +94,20 @@ class ProductImages extends StatelessWidget {
           Container(
             margin: EdgeInsets.symmetric(
                 horizontal: getProportionateScreenWidth(8)),
-            padding: EdgeInsets.all(getProportionateScreenHeight(8)),
+            // padding: EdgeInsets.all(getProportionateScreenHeight(8)),
             height: getProportionateScreenWidth(58),
             width: getProportionateScreenWidth(58),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(5),
               border: Border.all(
                   color: productImagesSwiper.currentImageIndex == index
                       ? kPrimaryColor
                       : Colors.transparent),
             ),
-            child: Image.network(product.images[index]),
+            child: ClipRRect(
+                borderRadius: BorderRadius.circular(5),
+                child: Image.network(product.images[index], fit: BoxFit.fill)),
           ),
           SizedBox(
             height: 5,

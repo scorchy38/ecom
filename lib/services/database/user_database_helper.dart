@@ -208,6 +208,18 @@ class UserDatabaseHelper {
     return orderedProducts;
   }
 
+  Future<int> getCartLength() async {
+    String uid = AuthentificationService().currentUser.uid;
+    final cartItems = await firestore
+        .collection(USERS_COLLECTION_NAME)
+        .doc(uid)
+        .collection(CART_COLLECTION_NAME)
+        .get();
+    int len = cartItems.docs.length;
+
+    return len;
+  }
+
   Future<num> get cartTotal async {
     String uid = AuthentificationService().currentUser.uid;
     final cartItems = await firestore

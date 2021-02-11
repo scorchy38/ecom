@@ -1,6 +1,7 @@
 import 'package:ecom/components/nothingtoshow_container.dart';
 import 'package:ecom/components/product_short_detail_card.dart';
 import 'package:ecom/constants.dart';
+import 'package:ecom/models/Order.dart';
 import 'package:ecom/models/OrderedProduct.dart';
 import 'package:ecom/models/Product.dart';
 import 'package:ecom/models/Review.dart';
@@ -8,6 +9,8 @@ import 'package:ecom/screens/my_orders/components/product_review_dialog.dart';
 import 'package:ecom/screens/product_details/product_details_screen.dart';
 import 'package:ecom/services/authentification/authentification_service.dart';
 import 'package:ecom/services/data_streams/ordered_products_stream.dart';
+import 'package:ecom/services/data_streams/orders_stream.dart';
+import 'package:ecom/services/database/orders_database_helper.dart';
 import 'package:ecom/services/database/product_database_helper.dart';
 import 'package:ecom/services/database/user_database_helper.dart';
 import 'package:ecom/size_config.dart';
@@ -21,18 +24,18 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
-  final OrderedProductsStream orderedProductsStream = OrderedProductsStream();
+  final OrdersStream ordersStream = OrdersStream();
 
   @override
   void initState() {
     super.initState();
-    orderedProductsStream.init();
+    ordersStream.init();
   }
 
   @override
   void dispose() {
     super.dispose();
-    orderedProductsStream.dispose();
+    ordersStream.dispose();
   }
 
   @override
@@ -69,17 +72,17 @@ class _BodyState extends State<Body> {
   }
 
   Future<void> refreshPage() {
-    orderedProductsStream.reload();
+    ordersStream.reload();
     return Future<void>.value();
   }
 
   Widget buildOrderedProductsList() {
-    return StreamBuilder<List<String>>(
-      stream: orderedProductsStream.stream,
+    return StreamBuilder<List<Order>>(
+      stream: ordersStream.stream,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          final orderedProductsIds = snapshot.data;
-          if (orderedProductsIds.length == 0) {
+          final orders = snapshot.data;
+          if (orders.length == 0) {
             return Center(
               child: NothingToShowContainer(
                 iconPath: "assets/icons/empty_bag.svg",
@@ -89,18 +92,23 @@ class _BodyState extends State<Body> {
           }
           return ListView.builder(
             physics: BouncingScrollPhysics(),
-            itemCount: orderedProductsIds.length,
+            itemCount: orders.length,
             itemBuilder: (context, index) {
-              return FutureBuilder<OrderedProduct>(
-                future: UserDatabaseHelper()
-                    .getOrderedProductFromId(orderedProductsIds[index]),
+              // print('order id ${orders[index].orderid}');
+              return FutureBuilder<List<Product>>(
+                future:
+                    OrdersDatabaseHelper().getOrderItems(orders[index].orderid),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     final orderedProduct = snapshot.data;
-                    return buildOrderedProductItem(orderedProduct);
+                    return buildOrderedProductItem(
+                        orderedProduct, orders[index]);
                   } else if (snapshot.connectionState ==
                       ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
+                    return Center(
+                        child: CircularProgressIndicator(
+                      backgroundColor: kSecondaryColor,
+                    ));
                   } else if (snapshot.hasError) {
                     final error = snapshot.error.toString();
                     Logger().e(error);
@@ -116,7 +124,9 @@ class _BodyState extends State<Body> {
           );
         } else if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator(
+              backgroundColor: kSecondaryColor,
+            ),
           );
         } else if (snapshot.hasError) {
           final error = snapshot.error;
@@ -133,172 +143,105 @@ class _BodyState extends State<Body> {
     );
   }
 
-  Widget buildOrderedProductItem(OrderedProduct orderedProduct) {
-    return FutureBuilder<Product>(
-      future:
-          ProductDatabaseHelper().getProductWithID(orderedProduct.productUid),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final product = snapshot.data;
-          return Padding(
-            padding: EdgeInsets.symmetric(vertical: 6),
-            child: Column(
-              children: [
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    vertical: 12,
-                    horizontal: 16,
-                  ),
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: kTextColor.withOpacity(0.12),
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(16),
-                      topRight: Radius.circular(16),
-                    ),
-                  ),
-                  child: Text.rich(
-                    TextSpan(
-                      text: "Ordered on:  ",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 12,
-                      ),
-                      children: [
-                        TextSpan(
-                          text: orderedProduct.orderDate,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 4,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    border: Border.symmetric(
-                      vertical: BorderSide(
-                        color: kTextColor.withOpacity(0.15),
-                      ),
-                    ),
-                  ),
-                  child: ProductShortDetailCard(
-                    productId: product.id,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ProductDetailsScreen(
-                            productId: product.id,
-                          ),
-                        ),
-                      ).then((_) async {
-                        await refreshPage();
-                      });
-                    },
-                  ),
-                ),
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: kPrimaryColor,
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(16),
-                      bottomRight: Radius.circular(16),
-                    ),
-                  ),
-                  child: FlatButton(
-                    onPressed: () async {
-                      String currentUserUid =
-                          AuthentificationService().currentUser.uid;
-                      Review prevReview;
-                      try {
-                        prevReview = await ProductDatabaseHelper()
-                            .getProductReviewWithID(product.id, currentUserUid);
-                      } on FirebaseException catch (e) {
-                        Logger().w("Firebase Exception: $e");
-                      } catch (e) {
-                        Logger().w("Unknown Exception: $e");
-                      } finally {
-                        if (prevReview == null) {
-                          prevReview = Review(
-                            currentUserUid,
-                            reviewerUid: currentUserUid,
-                          );
-                        }
-                      }
-
-                      final result = await showDialog(
-                        context: context,
-                        builder: (context) {
-                          return ProductReviewDialog(
-                            review: prevReview,
-                          );
-                        },
-                      );
-                      if (result is Review) {
-                        bool reviewAdded = false;
-                        String snackbarMessage;
-                        try {
-                          reviewAdded = await ProductDatabaseHelper()
-                              .addProductReview(product.id, result);
-                          if (reviewAdded == true) {
-                            snackbarMessage =
-                                "Product review added successfully";
-                          } else {
-                            throw "Coulnd't add product review due to unknown reason";
-                          }
-                        } on FirebaseException catch (e) {
-                          Logger().w("Firebase Exception: $e");
-                          snackbarMessage = e.toString();
-                        } catch (e) {
-                          Logger().w("Unknown Exception: $e");
-                          snackbarMessage = e.toString();
-                        } finally {
-                          Logger().i(snackbarMessage);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(snackbarMessage),
-                            ),
-                          );
-                        }
-                      }
-                      await refreshPage();
-                    },
-                    child: Text(
-                      "Give Product Review",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+  Widget buildOrderedProductItem(List<Product> orderedProducts, Order order) {
+    List<Widget> products = [];
+    for (int i = 0; i < orderedProducts.length; i++) {
+      products.add(ProductShortDetailCard(
+        productId: orderedProducts[i].id,
+        quantity: order.quantities[i].toString(),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProductDetailsScreen(
+                productId: orderedProducts[i].id,
+              ),
             ),
-          );
-        } else if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          final error = snapshot.error.toString();
-          Logger().e(error);
-        }
-        return Icon(
-          Icons.error,
-          size: 60,
-          color: kTextColor,
-        );
-      },
+          ).then((_) async {
+            await refreshPage();
+          });
+        },
+      ));
+    }
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 6),
+      child: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.symmetric(
+              vertical: 12,
+              horizontal: 16,
+            ),
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: kTextColor.withOpacity(0.12),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10),
+                topRight: Radius.circular(10),
+              ),
+            ),
+            child: Text.rich(
+              TextSpan(
+                text: "Ordered on:  ",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 13,
+                ),
+                children: [
+                  TextSpan(
+                    text:
+                        '${order.timestamp.toDate().day}-${order.timestamp.toDate().month}-${order.timestamp.toDate().year}',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: 4,
+              vertical: 8,
+            ),
+            decoration: BoxDecoration(
+              border: Border.symmetric(
+                vertical: BorderSide(
+                  color: kTextColor.withOpacity(0.15),
+                ),
+              ),
+            ),
+            child: Column(
+              children: products,
+            ),
+          ),
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(
+              horizontal: 8,
+              vertical: 2,
+            ),
+            decoration: BoxDecoration(
+              color: kPrimaryColor,
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(10),
+                bottomRight: Radius.circular(10),
+              ),
+            ),
+            child: FlatButton(
+              color: kPrimaryColor,
+              child: Text(
+                "Order Total - ${order.amount}",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

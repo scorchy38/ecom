@@ -16,11 +16,10 @@ import 'package:logger/logger.dart';
 
 class Body extends StatefulWidget {
   final ProductType productType;
+  final Widget banner;
 
-  Body({
-    Key key,
-    @required this.productType,
-  }) : super(key: key);
+  Body({Key key, @required this.productType, @required this.banner})
+      : super(key: key);
 
   @override
   _BodyState createState() =>
@@ -61,13 +60,19 @@ class _BodyState extends State<Body> {
                   SizedBox(height: getProportionateScreenHeight(20)),
                   buildHeadBar(),
                   SizedBox(height: getProportionateScreenHeight(20)),
+                  widget.banner != null
+                      ? SizedBox(
+                          height: 150,
+                          child: buildCategoryBanner(),
+                        )
+                      : Container(),
+                  widget.banner != null
+                      ? SizedBox(height: getProportionateScreenHeight(20))
+                      : Container(),
                   SizedBox(
-                    height: SizeConfig.screenHeight * 0.13,
-                    child: buildCategoryBanner(),
-                  ),
-                  SizedBox(height: getProportionateScreenHeight(20)),
-                  SizedBox(
-                    height: SizeConfig.screenHeight * 0.68,
+                    height: widget.banner != null
+                        ? SizeConfig.screenHeight * 0.68
+                        : SizeConfig.screenHeight * 0.88,
                     child: StreamBuilder<List<String>>(
                       stream: categoryProductsStream.stream,
                       builder: (context, snapshot) {
@@ -171,37 +176,7 @@ class _BodyState extends State<Body> {
   }
 
   Widget buildCategoryBanner() {
-    return Stack(
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(bannerFromProductType()),
-              fit: BoxFit.fill,
-              colorFilter: ColorFilter.mode(
-                kPrimaryColor,
-                BlendMode.hue,
-              ),
-            ),
-            borderRadius: BorderRadius.circular(30),
-          ),
-        ),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 16),
-            child: Text(
-              EnumToString.convertToString(widget.productType),
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w900,
-                fontSize: 24,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
+    return widget.banner;
   }
 
   Widget buildProductsGrid(List<String> productsId) {
@@ -211,7 +186,7 @@ class _BodyState extends State<Body> {
         horizontal: 8,
       ),
       decoration: BoxDecoration(
-        color: Color(0xFFF5F6F9),
+        // color: Color(0xFFF5F6F9),
         borderRadius: BorderRadius.circular(15),
       ),
       child: GridView.builder(
@@ -255,11 +230,11 @@ class _BodyState extends State<Body> {
     switch (widget.productType) {
       case ProductType.Electronics:
         return "assets/images/electronics_banner.jpg";
-      case ProductType.Books:
+      case ProductType.HomeDecor:
         return "assets/images/books_banner.jpg";
       case ProductType.Fashion:
         return "assets/images/fashions_banner.jpg";
-      case ProductType.Groceries:
+      case ProductType.Handicrafts:
         return "assets/images/groceries_banner.jpg";
       case ProductType.Art:
         return "assets/images/arts_banner.jpg";

@@ -1,4 +1,6 @@
+import 'package:ecom/screens/root_screen/root_screen.dart';
 import 'package:ecom/screens/sign_in/sign_in_screen.dart';
+import 'package:ecom/services/authentification/authentification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intro_slider/dot_animation_enum.dart';
 import 'package:intro_slider/intro_slider.dart';
@@ -190,14 +192,22 @@ class IntroScreenState extends State<IntroScreen> {
     );
   }
 
-  void onDonePress() {
+  void onDonePress() async {
     // Back to the first tab
-
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => SignInScreen(),
-        ));
+    var user = await AuthentificationService().currentUser;
+    // print(user);
+    if (user == null)
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SignInScreen(),
+          ));
+    else
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RootScreen(),
+          ));
   }
 
   void onTabChangeCompleted(index) {

@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecom/models/Order.dart';
+import 'package:ecom/models/Product.dart';
 import 'package:ecom/services/authentification/authentification_service.dart';
+import 'package:ecom/services/database/product_database_helper.dart';
 
 class OrdersDatabaseHelper {
   static const String ORDERS_COLLECTION_NAME = "orders";
@@ -51,14 +53,42 @@ class OrdersDatabaseHelper {
   //   await docRef.delete();
   // }
 
-  Future<bool> addOrderForCurrentUser(Order order) async {
+  Future<bool> addOrderForCurrentUser(Order order, String key) async {
     String uid = AuthentificationService().currentUser.uid;
     final addressesCollectionReference =
         firestore.collection(ORDERS_COLLECTION_NAME);
-    await addressesCollectionReference.add(order.toMap());
+    await addressesCollectionReference.doc(key).set(order.toMap());
     return true;
   }
-  //
+
+  Future<List<Order>> getOrdersOfCurrentUser() async {
+    String uid = AuthentificationService().currentUser.uid;
+    final addressesCollectionReference =
+        firestore.collection(ORDERS_COLLECTION_NAME);
+    List<Order> userOrders = [];
+    await addressesCollectionReference.get().then((value) {
+      for (var v in value.docs) {
+        if (v.data()['userid'] == uid) userOrders.add(Order.fromMap(v.data()));
+      }
+    });
+    return userOrders;
+  }
+
+  Future<List<Product>> getOrderItems(String orderId) async {
+    String uid = AuthentificationService().currentUser.uid;
+    print('data ${orderId}');
+    final orderDocument =
+        await firestore.collection(ORDERS_COLLECTION_NAME).doc(orderId).get();
+    List<Product> orderedProducts = [];
+
+    for (var v in orderDocument.data()['products_ordered']) {
+      orderedProducts.add(await ProductDatabaseHelper().getProductWithID(v));
+    }
+
+    return orderedProducts;
+  }
+
+//
   // Future<bool> deleteAddressForCurrentUser(String id) async {
   //   String uid = AuthentificationService().currentUser.uid;
   //   final addressDocReference = firestore

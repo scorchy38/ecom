@@ -35,8 +35,8 @@ class AddressShortDetailsCard extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: kTextColor.withOpacity(0.24),
                         borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(15),
-                          bottomLeft: Radius.circular(15),
+                          topLeft: Radius.circular(10),
+                          bottomLeft: Radius.circular(10),
                         ),
                       ),
                       child: Center(
@@ -61,8 +61,8 @@ class AddressShortDetailsCard extends StatelessWidget {
                       decoration: BoxDecoration(
                         border: Border.all(color: kTextColor.withOpacity(0.24)),
                         borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(15),
-                          bottomRight: Radius.circular(15),
+                          topRight: Radius.circular(10),
+                          bottomRight: Radius.circular(10),
                         ),
                       ),
                       child: Column(

@@ -27,6 +27,8 @@ dependencies:
   logger: ^0.9.4
   getwidget: ^1.2.4
   fancy_shimmer_image: ^1.2.0
+  random_string: ^2.1.0
+  persistent_bottom_nav_bar: ^2.1.0
   permission_handler: ^5.0.1+1
   #  pinch_zoom_image_updated: ^0.2.6
   provider: ^4.3.2+3

@@ -28,7 +28,7 @@ class ProductTypeBox extends StatelessWidget {
           padding: EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: kPrimaryColor.withOpacity(0.09),
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(5),
             border: Border.all(
               color: kPrimaryColor.withOpacity(0.18),
             ),
@@ -36,19 +36,19 @@ class ProductTypeBox extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Expanded(
-              //   child: Padding(
-              //     padding: const EdgeInsets.all(15.0),
-              //     child: AspectRatio(
-              //       aspectRatio: 1,
-              //       child: SvgPicture.asset(
-              //         icon,
-              //         color: kPrimaryColor,
-              //       ),
-              //     ),
-              //   ),
-              // ),
-              // SizedBox(height: 2),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: AspectRatio(
+                    aspectRatio: 1,
+                    child: SvgPicture.asset(
+                      icon,
+                      // color: kPrimaryColor,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 2),
               Text(
                 title,
                 style: TextStyle(

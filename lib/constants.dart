@@ -3,14 +3,14 @@ import 'package:ecom/size_config.dart';
 
 const String appName = "E-Shopee";
 
-const kPrimaryColor = Color(0xFF75B9BE);
+const kPrimaryColor = Color(0xFF449DD1);
 const kPrimaryLightColor = Color(0xFFFFECDF);
 const kPrimaryGradientColor = LinearGradient(
   begin: Alignment.topLeft,
   end: Alignment.bottomRight,
   colors: [Color(0xFFFFA53E), Color(0xFFFF7643)],
 );
-const kSecondaryColor = Color(0xFF979797);
+const kSecondaryColor = Color(0xFF607D8B);
 const kTextColor = Color(0xFF757575);
 
 const kAnimationDuration = Duration(milliseconds: 200);

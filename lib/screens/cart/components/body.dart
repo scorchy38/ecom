@@ -5,7 +5,6 @@ import 'package:ecom/components/product_short_detail_card.dart';
 import 'package:ecom/constants.dart';
 import 'package:ecom/models/CartItem.dart';
 import 'package:ecom/models/Order.dart';
-import 'package:ecom/models/OrderedProduct.dart';
 import 'package:ecom/models/Product.dart';
 import 'package:ecom/screens/cart/components/checkout_card.dart';
 import 'package:ecom/screens/product_details/product_details_screen.dart';
@@ -19,6 +18,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:future_progress_dialog/future_progress_dialog.dart';
 import 'package:logger/logger.dart';
+import 'package:random_string/random_string.dart';
 
 import '../../../utils.dart';
 
@@ -387,7 +387,8 @@ class _BodyState extends State<Body> {
         String snackbarmMessage;
         print('Quantities ${quantities}');
         try {
-          Order o = new Order(null,
+          String random = await randomAlpha(10);
+          Order o = new Order(random,
               timestamp: timestamp,
               orderType: OrderType.COD,
               productsOrdered: productIds,
@@ -396,9 +397,10 @@ class _BodyState extends State<Body> {
               prices: prices,
               quantities: quantities,
               address: 'Address',
+              orderid: random,
               amount: amount);
           addedProductsToMyProducts =
-              await OrdersDatabaseHelper().addOrderForCurrentUser(o);
+              await OrdersDatabaseHelper().addOrderForCurrentUser(o, random);
           if (addedProductsToMyProducts) {
             snackbarmMessage = "Products ordered Successfully";
           } else {
