@@ -7,8 +7,10 @@ enum OrderType { COD, Online }
 
 class Order extends Model {
   static const String TIMESTAMP_KEY = "timestamp";
+  static const String DELIVERY_TIMESTAMP_KEY = "deliveryTimestamp";
   static const String USER_ID_KEY = "userid";
   static const String AMOUNT_KEY = "amount";
+
   static const String ORDER_ID_KEY = "orderid";
   static const String PRODUCTS_ORDERED_KEY = "products_ordered";
   static const String ORDER_TYPE_KEY = "order_type";
@@ -16,12 +18,15 @@ class Order extends Model {
   static const String QUANTITIES_KEY = "quantities";
   static const String PRICES_KEY = "prices";
   static const String STATUS_KEY = "status";
+  static const String DELIVERY_TYPE_KEY = "deliveryType";
 
   List<String> productsOrdered;
   List<int> quantities;
   List<num> prices;
   String orderid;
+  String deliveryType;
   Timestamp timestamp;
+  Timestamp deliveryTimestamp;
   String userid;
   String status;
   String address;
@@ -33,7 +38,9 @@ class Order extends Model {
       this.amount,
       this.orderType,
       this.orderid,
+      this.deliveryTimestamp,
       this.productsOrdered,
+      this.deliveryType,
       this.userid,
       this.status,
       this.address,
@@ -53,8 +60,10 @@ class Order extends Model {
     return Order(
       id,
       userid: map[USER_ID_KEY],
+      deliveryType: map[DELIVERY_TYPE_KEY],
       amount: map[AMOUNT_KEY],
       timestamp: map[TIMESTAMP_KEY],
+      deliveryTimestamp: map[DELIVERY_TIMESTAMP_KEY],
       orderid: map[ORDER_ID_KEY],
       status: map[STATUS_KEY],
       address: map[ADDRESS_KEY],
@@ -69,6 +78,8 @@ class Order extends Model {
   Map<String, dynamic> toMap() {
     final map = <String, dynamic>{
       TIMESTAMP_KEY: timestamp,
+      DELIVERY_TYPE_KEY: deliveryType,
+      DELIVERY_TIMESTAMP_KEY: deliveryTimestamp,
       USER_ID_KEY: userid,
       AMOUNT_KEY: amount,
       ORDER_TYPE_KEY: EnumToString.convertToString(orderType),
@@ -90,7 +101,10 @@ class Order extends Model {
     if (userid != null) map[USER_ID_KEY] = userid;
     if (amount != null) map[AMOUNT_KEY] = amount;
     if (timestamp != null) map[TIMESTAMP_KEY] = timestamp;
+    if (deliveryTimestamp != null)
+      map[DELIVERY_TIMESTAMP_KEY] = deliveryTimestamp;
     if (status != null) map[STATUS_KEY] = status;
+    if (deliveryType != null) map[DELIVERY_TYPE_KEY] = deliveryType;
     if (address != null) map[ADDRESS_KEY] = address;
     if (quantities != null) map[QUANTITIES_KEY] = quantities;
     if (prices != null) map[PRICES_KEY] = prices;

@@ -7,6 +7,7 @@ import 'package:ecom/models/CartItem.dart';
 import 'package:ecom/models/Order.dart';
 import 'package:ecom/models/Product.dart';
 import 'package:ecom/screens/cart/components/checkout_card.dart';
+import 'package:ecom/screens/checkout_screen/checkout_screen.dart';
 import 'package:ecom/screens/product_details/product_details_screen.dart';
 import 'package:ecom/services/authentification/authentification_service.dart';
 import 'package:ecom/services/data_streams/cart_items_stream.dart';
@@ -364,8 +365,8 @@ class _BodyState extends State<Body> {
       return;
     }
     final orderFuture = UserDatabaseHelper().emptyCart();
-    orderFuture.then((orderedProducts) async {
-      if (orderedProducts != null) {
+    orderFuture.then((cartProducts) async {
+      if (cartProducts != null) {
         final timestamp = Timestamp.now();
         var userId = AuthentificationService().currentUser.uid;
         List<String> productIds = [];
@@ -373,7 +374,7 @@ class _BodyState extends State<Body> {
         List<num> prices = [];
         Product cartItem;
         num amount = 0;
-        for (var v in orderedProducts) {
+        for (var v in cartProducts) {
           productIds.add(v.id);
 
           cartItem = await ProductDatabaseHelper().getProductWithID(v.id);
@@ -386,51 +387,60 @@ class _BodyState extends State<Body> {
         bool addedProductsToMyProducts = false;
         String snackbarmMessage;
         print('Quantities ${quantities}');
-        try {
-          String random = await randomAlpha(10);
-          Order o = new Order(random,
-              timestamp: timestamp,
-              orderType: OrderType.COD,
-              productsOrdered: productIds,
-              userid: userId,
-              status: 'Pending',
-              prices: prices,
-              quantities: quantities,
-              address: 'Address',
-              orderid: random,
-              amount: amount);
-          addedProductsToMyProducts =
-              await OrdersDatabaseHelper().addOrderForCurrentUser(o, random);
-          if (addedProductsToMyProducts) {
-            snackbarmMessage = "Products ordered Successfully";
-          } else {
-            throw "Could not order products due to unknown issue";
-          }
-        } on FirebaseException catch (e) {
-          Logger().e(e.toString());
-          snackbarmMessage = e.toString();
-        } catch (e) {
-          Logger().e(e.toString());
-          snackbarmMessage = e.toString();
-        } finally {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(snackbarmMessage ?? "Something went wrong"),
-            ),
-          );
-        }
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => CheckoutScreen(
+                      quantities: quantities,
+                      productIds: productIds,
+                      prices: prices,
+                      amount: amount,
+                    )));
+        // try {
+        //   String random = await randomAlpha(10);
+        //   Order o = new Order(random,
+        //       timestamp: timestamp,
+        //       orderType: OrderType.COD,
+        //       productsOrdered: productIds,
+        //       userid: userId,
+        //       status: 'Pending',
+        //       prices: prices,
+        //       quantities: quantities,
+        //       address: 'Address',
+        //       orderid: random,
+        //       amount: amount);
+        //   addedProductsToMyProducts =
+        //       await OrdersDatabaseHelper().addOrderForCurrentUser(o, random);
+        //   if (addedProductsToMyProducts) {
+        //     snackbarmMessage = "Products ordered Successfully";
+        //   } else {
+        //     throw "Could not order products due to unknown issue";
+        //   }
+        // } on FirebaseException catch (e) {
+        //   Logger().e(e.toString());
+        //   snackbarmMessage = e.toString();
+        // } catch (e) {
+        //   Logger().e(e.toString());
+        //   snackbarmMessage = e.toString();
+        // } finally {
+        //   ScaffoldMessenger.of(context).showSnackBar(
+        //     SnackBar(
+        //       content: Text(snackbarmMessage ?? "Something went wrong"),
+        //     ),
+        //   );
+        // }
       } else {
         throw "Something went wrong while clearing cart";
       }
-      await showDialog(
-        context: context,
-        builder: (context) {
-          return FutureProgressDialog(
-            orderFuture,
-            message: Text("Placing the Order"),
-          );
-        },
-      );
+      // await showDialog(
+      //   context: context,
+      //   builder: (context) {
+      //     return FutureProgressDialog(
+      //       orderFuture,
+      //       message: Text("Placing the Order"),
+      //     );
+      //   },
+      // );
     }).catchError((e) {
       Logger().e(e.toString());
       ScaffoldMessenger.of(context).showSnackBar(
@@ -439,15 +449,15 @@ class _BodyState extends State<Body> {
         ),
       );
     });
-    await showDialog(
-      context: context,
-      builder: (context) {
-        return FutureProgressDialog(
-          orderFuture,
-          message: Text("Placing the Order"),
-        );
-      },
-    );
+    // await showDialog(
+    //   context: context,
+    //   builder: (context) {
+    //     return FutureProgressDialog(
+    //       orderFuture,
+    //       message: Text("Placing the Order"),
+    //     );
+    //   },
+    // );
     await refreshPage();
   }
 
