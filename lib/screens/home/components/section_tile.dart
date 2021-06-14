@@ -23,18 +23,19 @@ class SectionTile extends StatelessWidget {
             title,
             style: TextStyle(
               color: Colors.black,
-              fontSize: getProportionateScreenWidth(20),
+              fontSize: getProportionateScreenWidth(16),
               fontWeight: FontWeight.bold,
+              letterSpacing: 0.8
             ),
           ),
           InkWell(
             onTap: press,
             child: Text(
-              'See all',
+              'SEE ALL',
               style: TextStyle(
-                  color: kPrimaryColor.withOpacity(0.7),
-                  fontSize: 15,
-                  decoration: TextDecoration.underline),
+                  color: Colors.blueAccent,
+                  fontSize:  getProportionateScreenWidth(13)),
+                  // decoration: TextDecoration.underline),
             ),
           ),
         ],

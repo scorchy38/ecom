@@ -50,22 +50,23 @@ List<PersistentBottomNavBarItem> navBarItems = [
     inactiveColor: Colors.blueGrey,
   ),
   PersistentBottomNavBarItem(
-    icon: Icon(Icons.category),
+    icon: Icon(EvaIcons.gridOutline),
     title: ("Categories"),
     activeColor: Color(0xFFc32525),
     inactiveColor: Colors.blueGrey,
   ),
   PersistentBottomNavBarItem(
-    icon: Icon(Icons.notifications),
+    icon: Icon(EvaIcons.bellOutline),
     title: ("Notifications"),
     activeColor: Color(0xFFc32525),
     inactiveColor: Colors.blueGrey,
   ),
   PersistentBottomNavBarItem(
-    icon: Icon(Icons.person),
+    icon: Icon(EvaIcons.personOutline),
     title: ("Profile"),
     activeColor: Color(0xFFc32525),
     inactiveColor: Colors.blueGrey,
+    
   ),
 ];
 

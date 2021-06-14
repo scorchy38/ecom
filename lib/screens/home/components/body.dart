@@ -19,11 +19,13 @@ import 'package:ecom/size_config.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:future_progress_dialog/future_progress_dialog.dart';
 import 'package:getwidget/components/carousel/gf_carousel.dart';
 import 'package:logger/logger.dart';
 import '../../../utils.dart';
 import '../components/home_header.dart';
+import 'hot-trend-section.dart';
 import 'image_banner.dart';
 import 'product_type_box.dart';
 import 'products_section.dart';
@@ -200,6 +202,12 @@ class _BodyState extends State<Body> {
 //        ),
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+      ),
+    );
     return  SafeArea(
         child: RefreshIndicator(
           onRefresh: refreshPage,
@@ -412,6 +420,9 @@ class _BodyState extends State<Body> {
                   //   ),
                   // ),
                   SizedBox(height: getProportionateScreenHeight(20)),
+
+                  HotTrendItemSection(),
+
                   SizedBox(
                     height: SizeConfig.screenWidth * 1.6,
                     child: ProductsSection(

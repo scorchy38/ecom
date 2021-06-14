@@ -53,3 +53,11 @@ OutlineInputBorder outlineInputBorder() {
     borderSide: BorderSide(color: kTextColor),
   );
 }
+
+final titleTextStyle = TextStyle(
+  fontSize: getProportionateScreenHeight(10),
+  letterSpacing: 0.8,
+  color: Colors.white,
+  fontWeight: FontWeight.bold
+
+);
