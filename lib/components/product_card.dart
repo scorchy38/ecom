@@ -25,12 +25,12 @@ class ProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 1),
       child: GestureDetector(
         onTap: press,
         child: Container(
-          width: 180,
-          height: 200,
+          width:70,
+          height: 10,
           decoration: BoxDecoration(
             color: kPrimaryColor.withOpacity(0.05),
             border: Border.all(color: kTextColor.withOpacity(0.15)),
@@ -83,7 +83,7 @@ class ProductCard extends StatelessWidget {
             fit: BoxFit.contain,
           ),
         ),
-        SizedBox(height: 10),
+        SizedBox(height: getProportionateScreenHeight(5)),
         Flexible(
           flex: 2,
           child: Column(
@@ -102,15 +102,15 @@ class ProductCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              SizedBox(height: 5),
+              SizedBox(height: getProportionateScreenHeight(1)),
               Container(
-                height: 43,
+                height: getProportionateScreenHeight(50),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Flexible(
-                      flex: 5,
+                      flex: 8,
                       child: Text.rich(
                         TextSpan(
                           text: "\₹${product.discountPrice} ",
@@ -210,12 +210,12 @@ class ProductCard extends StatelessWidget {
                                             ? Icon(
                                                 Icons.favorite,
                                                 color: kPrimaryColor,
-                                                size: 30,
+                                                size: 25,
                                               )
                                             : Icon(
                                                 Icons.favorite_outline,
                                                 color: kPrimaryColor,
-                                                size: 30,
+                                                size: 25,
                                               ),
                                       ),
                                     );

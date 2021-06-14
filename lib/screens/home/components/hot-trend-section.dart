@@ -13,7 +13,6 @@ class HotTrendItemSection extends StatefulWidget {
 }
 
 class _HotTrendItemSectionState extends State<HotTrendItemSection> {
-
   Widget staggedGriItem() {
     return Container(
       alignment: Alignment.bottomCenter,
@@ -25,41 +24,107 @@ class _HotTrendItemSectionState extends State<HotTrendItemSection> {
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
           color: Colors.white,
-          // gradient: new LinearGradient(
-          //         end: const Alignment(0.0, -5),
-          //         begin: const Alignment(0.0, 0.6),
-          //         colors: <Color>[
-          //           const Color(0x8A000000),
-          //           Colors.black12.withOpacity(0.0)
-          //         ],
-          //       ),
-
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey[600],
-              blurRadius: 0.07,
-              spreadRadius: 0.07,
-            )
-          ],
-          // border: Border.all(
-          //   color: Colors.grey[200],
-          // ),
           image: DecorationImage(
               fit: BoxFit.fill,
               image: AssetImage(
                 'assets/images/hot-trend-${Random().nextInt(3) + 1}.jpg',
-              ))),
+              )),
+          gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              stops: [
+                0.1,
+                0.05,
+                0.2,
+                0.8
+              ],
+              //     image: DecorationImage(
+              //         fit: BoxFit.fill,
+              //         image: AssetImage(
+              //           'assets/images/hot-trend-${Random().nextInt(3) + 1}.jpg',
+              //         ))),
+              colors: [
+                Colors.transparent,
+                // Colors.grey
+                //     .withOpacity(
+                //         0.01),
+                Colors.transparent,
+                Colors.black26,
+                Colors.black,
+              ])),
+      // decoration: BoxDecoration(
+
+      //     // gradient: new LinearGradient(
+      //     //         end: const Alignment(0.0, -5),
+      //     //         begin: const Alignment(0.0, 0.6),
+      //     //         colors: <Color>[
+      //     //           const Color(0x8A000000),
+      //     //           Colors.black12.withOpacity(0.0)
+      //     //         ],
+      //     //       ),
+
+      //     boxShadow: [
+      //       BoxShadow(
+      //         color: Colors.grey[600],
+      //         blurRadius: 0.07,
+      //         spreadRadius: 0.07,
+      //       )
+      //     ],
+      //     // border: Border.all(
+      //     //   color: Colors.grey[200],
+      //     // ),
+
       child: Container(
-        margin: EdgeInsets.only(
-          bottom: MediaQuery.of(context).size.height * 0.01,
+        height: getProportionateScreenWidth(40),
+        width: double.infinity,
+        alignment: Alignment.center,
+        padding: EdgeInsets.only(
+          top: getProportionateScreenWidth(5)
         ),
-        width: MediaQuery.of(context).size.width * 0.14,
-        // decoration: BoxDecoration(
-        //     color: Colors.white, borderRadius: BorderRadius.circular(12)),
-        child: Text(
-          'MULTI COLORED',
-          textAlign: TextAlign.center,
-          style: titleTextStyle,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+         gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              stops: [
+                0.1,
+                0.05,
+                0.2,
+                0.8
+              ],
+              
+               //     image: DecorationImage(
+      //         fit: BoxFit.fill,
+      //         image: AssetImage(
+      //           'assets/images/hot-trend-${Random().nextInt(3) + 1}.jpg',
+      //         ))),
+              colors: [
+                Colors.transparent,
+                // Colors.grey
+                //     .withOpacity(
+                //         0.01),
+                Colors.transparent,
+                Colors.black26,
+                Colors.black,
+              ])
+        ),
+        child: Column(
+          children: [
+            Text(
+              'MULTI COLORED',
+              textAlign: TextAlign.center,
+              style: titleTextStyle,
+            ),
+            Text(
+              'MANY VARIANT',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 8,
+                color: Colors.white
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -68,27 +133,27 @@ class _HotTrendItemSectionState extends State<HotTrendItemSection> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('#Hottest Trends🔥'),
-            SizedBox(
-              height: getProportionateScreenHeight(10),
-            ),
-            StaggeredGridView.countBuilder(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            crossAxisCount: 2,
-                            itemCount: 8,
-                            itemBuilder: (BuildContext context, int i) {
-                              return staggedGriItem();
-                            },
-                            mainAxisSpacing: getProportionateScreenHeight(10),
-                            staggeredTileBuilder: (index) {
-                              return StaggeredTile.count(1, index.isOdd ? 1 : 1.5);
-                            }),
-          ],
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('#Hottest Trends🔥'),
+          SizedBox(
+            height: getProportionateScreenHeight(10),
+          ),
+          StaggeredGridView.countBuilder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              crossAxisCount: 2,
+              itemCount: 8,
+              itemBuilder: (BuildContext context, int i) {
+                return staggedGriItem();
+              },
+              mainAxisSpacing: getProportionateScreenHeight(10),
+              staggeredTileBuilder: (index) {
+                return StaggeredTile.count(1, index.isOdd ? 1 : 1.5);
+              }),
+        ],
+      ),
     );
   }
 }
