@@ -30,6 +30,7 @@ class ProductCard extends StatelessWidget {
         onTap: press,
         child: Container(
           width: 180,
+          height: 200,
           decoration: BoxDecoration(
             color: kPrimaryColor.withOpacity(0.05),
             border: Border.all(color: kTextColor.withOpacity(0.15)),
@@ -37,9 +38,10 @@ class ProductCard extends StatelessWidget {
               Radius.circular(10),
             ),
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: FutureBuilder<Product>(
+          padding: EdgeInsets.all(
+            getProportionateScreenHeight(5)
+          ),
+          child: FutureBuilder<Product>(
               future: ProductDatabaseHelper().getProductWithID(productId),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
@@ -65,7 +67,7 @@ class ProductCard extends StatelessWidget {
             ),
           ),
         ),
-      ),
+      
     );
   }
 
@@ -74,7 +76,7 @@ class ProductCard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-          width: SizeConfig.screenWidth * 0.35,
+          width: SizeConfig.screenWidth * 0.40,
           height: SizeConfig.screenWidth * 0.4,
           child: Image.network(
             product.images[0],
