@@ -26,6 +26,7 @@ import 'package:logger/logger.dart';
 import '../../../utils.dart';
 import '../components/home_header.dart';
 import 'explore_all_product.dart';
+import 'flash-sale.dart';
 import 'hot-trend-section.dart';
 import 'image_banner.dart';
 import 'product_type_box.dart';
@@ -362,6 +363,8 @@ class _BodyState extends State<Body> {
                   pagerSize: 8,
                 ),
 
+               
+
                 SizedBox(height: getProportionateScreenHeight(15)),
                 //Image dimesnions [width:750px and height : 220 px]
                 ImageBanner(
@@ -401,6 +404,10 @@ class _BodyState extends State<Body> {
                     ),
                   ),
                 ),
+
+                 SizedBox(height: getProportionateScreenHeight(20)),
+
+                 FlashSale(),
                 SizedBox(height: getProportionateScreenHeight(20)),
                 // adBanners.length >= 2
                 //     ? SizedBox(
