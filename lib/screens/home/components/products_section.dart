@@ -79,6 +79,7 @@ class ProductsSection extends StatelessWidget {
           );
         } else if (snapshot.hasError) {
           final error = snapshot.error;
+          print(error);
           Logger().w(error.toString());
         }
         return Center(

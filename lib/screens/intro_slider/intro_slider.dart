@@ -313,7 +313,7 @@ class IntroScreenState extends State<IntroScreen> {
       },
 
       // Show or hide status bar
-      shouldHideStatusBar: true,
+      // shouldHideStatusBar: true,
 
       // On tab change completed
       onTabChangeCompleted: this.onTabChangeCompleted,

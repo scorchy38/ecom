@@ -16,6 +16,7 @@ import 'package:ecom/services/data_streams/favourite_products_stream.dart';
 import 'package:ecom/services/database/product_database_helper.dart';
 import 'package:ecom/services/database/user_database_helper.dart';
 import 'package:ecom/size_config.dart';
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 import 'package:future_progress_dialog/future_progress_dialog.dart';
@@ -23,6 +24,7 @@ import 'package:getwidget/components/carousel/gf_carousel.dart';
 import 'package:logger/logger.dart';
 import '../../../utils.dart';
 import '../components/home_header.dart';
+import 'image_banner.dart';
 import 'product_type_box.dart';
 import 'products_section.dart';
 
@@ -198,9 +200,7 @@ class _BodyState extends State<Body> {
 //        ),
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // appBar: ,
-      body: SafeArea(
+    return  SafeArea(
         child: RefreshIndicator(
           onRefresh: refreshPage,
           child: SingleChildScrollView(
@@ -212,7 +212,9 @@ class _BodyState extends State<Body> {
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SizedBox(height: getProportionateScreenHeight(15)),
+                  
+                  // SizedBox(height: getProportionateScreenHeight(15)),
+
                   HomeHeader(
                     cartLen: cartLen,
                     cartItemsStream: cartItemsStream,
@@ -312,10 +314,13 @@ class _BodyState extends State<Body> {
                     },
                   ),
                   SizedBox(height: getProportionateScreenHeight(15)),
+                  ImageBanner(imageUrl: 'assets/images/promo-code-banner.png',),
+                  SizedBox(height: getProportionateScreenHeight(15)),
                   GFCarousel(
                     items: imageList.map(
                       (url) {
                         return Container(
+                          height: getProportionateScreenHeight(50),
                           margin: EdgeInsets.symmetric(
                             horizontal: getProportionateScreenWidth(7)
                           ),
@@ -350,6 +355,10 @@ class _BodyState extends State<Body> {
                     pauseAutoPlayOnTouch: Duration(seconds: 8),
                     pagerSize: 8,
                   ),
+
+                  SizedBox(height: getProportionateScreenHeight(15)),
+                  //Image dimesnions [width:750px and height : 220 px]
+                  ImageBanner(imageUrl: 'assets/images/service-banner.jpeg',),
                   SizedBox(height: getProportionateScreenHeight(15)),
                   SizedBox(
                     height: SizeConfig.screenHeight * 0.15,
@@ -385,13 +394,13 @@ class _BodyState extends State<Body> {
                     ),
                   ),
                   SizedBox(height: getProportionateScreenHeight(20)),
-                  adBanners.length >= 2
-                      ? SizedBox(
-                          height: SizeConfig.screenHeight * 0.2,
-                          width: SizeConfig.screenWidth,
-                          child: BannerSection([adBanners[0], adBanners[1]]),
-                        )
-                      : Container(),
+                  // adBanners.length >= 2
+                  //     ? SizedBox(
+                  //         height: SizeConfig.screenHeight * 0.2,
+                  //         width: SizeConfig.screenWidth,
+                  //         child: BannerSection([adBanners[0], adBanners[1]]),
+                  //       )
+                  //     : Container(),
                   // SizedBox(height: getProportionateScreenHeight(20)),
                   // SizedBox(
                   //   height: SizeConfig.screenHeight * 0.4,
@@ -475,8 +484,7 @@ class _BodyState extends State<Body> {
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 
   Future<void> refreshPage() {
