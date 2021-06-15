@@ -10,7 +10,7 @@ class ImageBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: getProportionateScreenHeight(60),
+      height: getProportionateScreenHeight(85),
       width: getProportionateScreenWidth(double.infinity),
       decoration: BoxDecoration(
           image: DecorationImage(

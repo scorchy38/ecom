@@ -78,37 +78,34 @@ class _HotTrendItemSectionState extends State<HotTrendItemSection> {
         height: getProportionateScreenWidth(40),
         width: double.infinity,
         alignment: Alignment.center,
-        padding: EdgeInsets.only(
-          top: getProportionateScreenWidth(5)
-        ),
+        padding: EdgeInsets.only(top: getProportionateScreenWidth(5)),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-         gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              stops: [
-                0.1,
-                0.05,
-                0.2,
-                0.8
-              ],
-              
-               //     image: DecorationImage(
-      //         fit: BoxFit.fill,
-      //         image: AssetImage(
-      //           'assets/images/hot-trend-${Random().nextInt(3) + 1}.jpg',
-      //         ))),
-              colors: [
-                Colors.transparent,
-                // Colors.grey
-                //     .withOpacity(
-                //         0.01),
-                Colors.transparent,
-                Colors.black26,
-                Colors.black,
-              ])
-        ),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                stops: [
+                  0.1,
+                  0.05,
+                  0.2,
+                  0.8
+                ],
+
+                //     image: DecorationImage(
+                //         fit: BoxFit.fill,
+                //         image: AssetImage(
+                //           'assets/images/hot-trend-${Random().nextInt(3) + 1}.jpg',
+                //         ))),
+                colors: [
+                  Colors.transparent,
+                  // Colors.grey
+                  //     .withOpacity(
+                  //         0.01),
+                  Colors.transparent,
+                  Colors.black26,
+                  Colors.black,
+                ])),
         child: Column(
           children: [
             Text(
@@ -119,10 +116,7 @@ class _HotTrendItemSectionState extends State<HotTrendItemSection> {
             Text(
               'MANY VARIANT',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 8,
-                color: Colors.white
-              ),
+              style: TextStyle(fontSize: 8, color: Colors.white),
             ),
           ],
         ),
@@ -136,7 +130,14 @@ class _HotTrendItemSectionState extends State<HotTrendItemSection> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('#Hottest Trends🔥'),
+          Text(
+            '#Hottest Trends🔥',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.black,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
           SizedBox(
             height: getProportionateScreenHeight(10),
           ),

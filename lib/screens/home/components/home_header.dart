@@ -38,16 +38,18 @@ class HomeHeader extends StatelessWidget {
         //     onSubmit: onSearchSubmitted,
         //   ),
         // ),
-        
+
         // SizedBox(width: 5),
-        IconButton(icon: Icon(EvaIcons.search), onPressed: (){}),
-        SizedBox(width:getProportionateScreenWidth(50)),
-        Text('MarketMela',style:TextStyle(
-          fontWeight: FontWeight.bold
-        ) ,),
-         SizedBox(width:getProportionateScreenWidth(50)),
-        IconButton(icon: Icon(EvaIcons.headphones), onPressed: (){}),
-        IconButton(icon: Icon(EvaIcons.heartOutline), onPressed: (){})
+        IconButton(icon: Icon(EvaIcons.search), onPressed: () {}),
+        SizedBox(width: getProportionateScreenWidth(50)),
+        Text(
+          'MarketMela',
+          style: TextStyle(
+              fontWeight: FontWeight.bold, color: Colors.black, fontSize: 18),
+        ),
+        SizedBox(width: getProportionateScreenWidth(50)),
+        IconButton(icon: Icon(EvaIcons.headphones), onPressed: () {}),
+        IconButton(icon: Icon(EvaIcons.heartOutline), onPressed: () {})
         // IconButtonWithCounter(
         //   svgSrc: "assets/icons/favourite.svg",
         //   press: onWishlistButtonPressed,
