@@ -31,7 +31,7 @@ import 'hot-trend-section.dart';
 import 'image_banner.dart';
 import 'product_type_box.dart';
 import 'products_section.dart';
-/////////
+
 const String ICON_KEY = "icon";
 const String TITLE_KEY = "title";
 const String PRODUCT_TYPE_KEY = "product_type";
