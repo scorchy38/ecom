@@ -16,13 +16,19 @@ import 'package:ecom/services/data_streams/favourite_products_stream.dart';
 import 'package:ecom/services/database/product_database_helper.dart';
 import 'package:ecom/services/database/user_database_helper.dart';
 import 'package:ecom/size_config.dart';
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:future_progress_dialog/future_progress_dialog.dart';
 import 'package:getwidget/components/carousel/gf_carousel.dart';
 import 'package:logger/logger.dart';
 import '../../../utils.dart';
 import '../components/home_header.dart';
+import 'explore_all_product.dart';
+import 'flash-sale.dart';
+import 'hot-trend-section.dart';
+import 'image_banner.dart';
 import 'product_type_box.dart';
 import 'products_section.dart';
 
@@ -92,6 +98,7 @@ class _BodyState extends State<Body> {
   List<String> adBanners = [];
   String donationBanner = '';
   int cartLen;
+  TabController _controller;
   getBanners() async {
     final firestoreInstance = FirebaseFirestore.instance;
     cartLen = await UserDatabaseHelper().getCartLength();
@@ -117,7 +124,7 @@ class _BodyState extends State<Body> {
 
   List imageList = [
     'https://firebasestorage.googleapis.com/v0/b/ecom-9a689.appspot.com/o/Screenshot%202021-02-09%20at%203.28.45%20PM.png?alt=media&token=816f535f-7a05-4bea-b415-5bbaa698f5c8',
-    'https://firebasestorage.googleapis.com/v0/b/ecom-9a689.appspot.com/o/Screenshot%202021-02-09%20at%203.33.09%20PM.png?alt=media&token=36a3ab05-dd7f-4909-a48f-8297dea48057'
+    'https://firebasestorage.googleapis.com/v0/b/ecom-9a689.appspot.com/o/Screenshot%202021-02-09%20at%203.33.09%20PM.png?alt=media&token=36a3ab05-dd7f-4909-a48f-8297dea48057',
   ];
   //        floatingActionButton: InkWell(
 //          onTap: () async {
@@ -197,6 +204,12 @@ class _BodyState extends State<Body> {
 //        ),
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+      ),
+    );
     return SafeArea(
       child: RefreshIndicator(
         onRefresh: refreshPage,
@@ -209,7 +222,8 @@ class _BodyState extends State<Body> {
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                SizedBox(height: getProportionateScreenHeight(15)),
+                // SizedBox(height: getProportionateScreenHeight(15)),
+
                 HomeHeader(
                   cartLen: cartLen,
                   cartItemsStream: cartItemsStream,
@@ -309,12 +323,21 @@ class _BodyState extends State<Body> {
                   },
                 ),
                 SizedBox(height: getProportionateScreenHeight(15)),
+                ImageBanner(
+                  imageUrl: 'assets/images/promo-code-banner.png',
+                ),
+                SizedBox(height: getProportionateScreenHeight(15)),
                 GFCarousel(
                   items: imageList.map(
                     (url) {
                       return Container(
-                        child: Padding(
-                          padding: const EdgeInsets.all(1.0),
+                        height: getProportionateScreenHeight(50),
+                        margin: EdgeInsets.symmetric(
+                            horizontal: getProportionateScreenWidth(7)),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12)),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
                           child: FancyShimmerImage(
                             shimmerDuration: Duration(seconds: 2),
                             imageUrl: '$url',
@@ -338,6 +361,14 @@ class _BodyState extends State<Body> {
                   activeIndicator: Colors.white,
                   pauseAutoPlayOnTouch: Duration(seconds: 8),
                   pagerSize: 8,
+                ),
+
+               
+
+                SizedBox(height: getProportionateScreenHeight(15)),
+                //Image dimesnions [width:750px and height : 220 px]
+                ImageBanner(
+                  imageUrl: 'assets/images/service-banner.jpeg',
                 ),
                 SizedBox(height: getProportionateScreenHeight(15)),
                 SizedBox(
@@ -373,14 +404,18 @@ class _BodyState extends State<Body> {
                     ),
                   ),
                 ),
+
+                 SizedBox(height: getProportionateScreenHeight(20)),
+
+                 FlashSale(),
                 SizedBox(height: getProportionateScreenHeight(20)),
-                adBanners.length >= 2
-                    ? SizedBox(
-                        height: SizeConfig.screenHeight * 0.2,
-                        width: SizeConfig.screenWidth,
-                        child: BannerSection([adBanners[0], adBanners[1]]),
-                      )
-                    : Container(),
+                // adBanners.length >= 2
+                //     ? SizedBox(
+                //         height: SizeConfig.screenHeight * 0.2,
+                //         width: SizeConfig.screenWidth,
+                //         child: BannerSection([adBanners[0], adBanners[1]]),
+                //       )
+                //     : Container(),
                 // SizedBox(height: getProportionateScreenHeight(20)),
                 // SizedBox(
                 //   height: SizeConfig.screenHeight * 0.4,
@@ -392,6 +427,9 @@ class _BodyState extends State<Body> {
                 //   ),
                 // ),
                 SizedBox(height: getProportionateScreenHeight(20)),
+
+                HotTrendItemSection(),
+
                 SizedBox(
                   height: SizeConfig.screenWidth * 1.6,
                   child: ProductsSection(
@@ -431,6 +469,25 @@ class _BodyState extends State<Body> {
                 ),
 
                 SizedBox(height: getProportionateScreenHeight(20)),
+               ExploreAllProduct(),
+                // new Container(
+                //   height: getProportionateScreenHeight(5),
+                //   decoration:
+                //       new BoxDecoration(color: Theme.of(context).primaryColor),
+                //   child: new TabBar(
+                //     controller: _controller,
+                //     tabs: [
+                //       new Tab(
+                //         icon: const Icon(Icons.home),
+                //         text: 'Address',
+                //       ),
+                //       new Tab(
+                //         icon: const Icon(Icons.my_location),
+                //         text: 'Location',
+                //       ),
+                //     ],
+                //   ),
+                // ),
                 SizedBox(
                   height: SizeConfig.screenWidth * 1.6,
                   child: ProductsSection(
@@ -487,3 +544,5 @@ class _BodyState extends State<Body> {
     });
   }
 }
+
+//call

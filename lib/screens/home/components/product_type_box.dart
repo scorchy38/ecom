@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -27,7 +29,7 @@ class ProductTypeBox extends StatelessWidget {
           ),
           padding: EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: kPrimaryColor.withOpacity(0.09),
+            color:Colors.white,
             borderRadius: BorderRadius.circular(5),
             border: Border.all(
               color: kPrimaryColor.withOpacity(0.18),
@@ -38,13 +40,15 @@ class ProductTypeBox extends StatelessWidget {
             children: [
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.all(15.0),
+                  padding: const EdgeInsets.all(5.0),
                   child: AspectRatio(
                     aspectRatio: 1,
-                    child: SvgPicture.asset(
-                      icon,
-                      // color: kPrimaryColor,
-                    ),
+                    child:Image.asset('assets/images/add-${Random().nextInt(3) + 1}.png',height: 20,)
+                    
+                    //  SvgPicture.asset(
+                    //   icon,
+                    //   // color: kPrimaryColor,
+                    // ),
                   ),
                 ),
               ),
