@@ -14,19 +14,24 @@ class ProductDetailsScreen extends StatelessWidget {
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => ProductActions(),
-      child: Scaffold(
-        backgroundColor: Color(0xFFF5F6F9),
-        appBar: AppBar(
-          backgroundColor: Color(0xFFF5F6F9),
-        ),
-        body: Body(
-          productId: productId,
-        ),
-        floatingActionButton: AddToCartFAB(productId: productId),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      ),
-    );
+    return Scaffold(
+        body: ProductData(
+      productId: productId,
+    ));
+
+    //  ChangeNotifierProvider(
+    //   create: (context) => ProductActions(),
+    //   child: Scaffold(
+    //     backgroundColor: Color(0xFFF5F6F9),
+    //     appBar: AppBar(
+    //       backgroundColor: Color(0xFFF5F6F9),
+    //     ),
+    //     body: ProductDetailsScreen(
+    //       productId: productId,
+    //     ),
+    //     // floatingActionButton: AddToCartFAB(productId: productId),
+    //     // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    //   ),
+    // );
   }
 }

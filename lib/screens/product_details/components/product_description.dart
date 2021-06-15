@@ -50,7 +50,7 @@ class ProductDescription extends StatelessWidget {
                     maxLines: 2,
                   ),
                 ),
-                ProductActionsSection(product: product).buildFavouriteButton(),
+                // ProductActionsSection(product: product).buildFavouriteButton(),
               ],
             ),
             const SizedBox(height: 16),

@@ -29,7 +29,7 @@ class ProductsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: 14,
+        horizontal: 5,
         vertical: 16,
       ),
       decoration: BoxDecoration(
@@ -79,6 +79,7 @@ class ProductsSection extends StatelessWidget {
           );
         } else if (snapshot.hasError) {
           final error = snapshot.error;
+          print(error);
           Logger().w(error.toString());
         }
         return Center(
@@ -99,9 +100,9 @@ class ProductsSection extends StatelessWidget {
       // scrollDirection: Axis.horizontal,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 0.65,
+        childAspectRatio: 0.7,
         crossAxisSpacing: 3,
-        mainAxisSpacing: 20,
+        mainAxisSpacing: 10,
       ),
       itemCount: 4,
       itemBuilder: (context, index) {
